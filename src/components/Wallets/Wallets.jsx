@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
-import { Wallet, Plus } from 'lucide-react'
+import { Wallet, Plus, ArrowRightLeft, Trash2, X } from 'lucide-react'
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
@@ -13,12 +13,12 @@ const defaultWallets = [
 ]
 
 const colorOptions = [
-  { color: '#888780', bg: '#F1EFE8', label: 'Gris'    },
-  { color: '#1D9E75', bg: '#E1F5EE', label: 'Verde'   },
-  { color: '#185FA5', bg: '#E6F1FB', label: 'Azul'    },
-  { color: '#D85A30', bg: '#FAECE7', label: 'Naranja' },
-  { color: '#7F77DD', bg: '#EEEDFE', label: 'Morado'  },
-  { color: '#EF9F27', bg: '#FAEEDA', label: 'Amarillo'},
+  { color: '#888780', bg: '#F1EFE8' },
+  { color: '#1D9E75', bg: '#E1F5EE' },
+  { color: '#185FA5', bg: '#E6F1FB' },
+  { color: '#D85A30', bg: '#FAECE7' },
+  { color: '#7F77DD', bg: '#EEEDFE' },
+  { color: '#EF9F27', bg: '#FAEEDA' },
 ]
 
 function Wallets({ session }) {
@@ -30,6 +30,8 @@ function Wallets({ session }) {
   const [newColor,     setNewColor]     = useState(colorOptions[0])
   const [saving,       setSaving]       = useState(false)
   const [isMobile,     setIsMobile]     = useState(window.innerWidth < 768)
+  // expanded: { wallet: 'Nequi', type: 'income' } o null
+  const [expanded,     setExpanded]     = useState(null)
 
   useEffect(() => {
     loadAll()
@@ -40,12 +42,10 @@ function Wallets({ session }) {
 
   async function loadAll() {
     setLoading(true)
-
     const [{ data: txData }, { data: walletData }] = await Promise.all([
-      supabase.from('transactions').select('*'),
+      supabase.from('transactions').select('*').order('created_at', { ascending: false }),
       supabase.from('wallets').select('*').order('created_at'),
     ])
-
     if (txData) setTransactions(txData)
     if (walletData) {
       const userWalletNames = walletData.map(w => w.name)
@@ -54,21 +54,17 @@ function Wallets({ session }) {
     } else {
       setWallets(defaultWallets)
     }
-
     setLoading(false)
   }
 
   async function handleAddWallet() {
     if (!newName.trim()) return
     setSaving(true)
-
     const { data, error } = await supabase
       .from('wallets')
       .insert([{ name: newName.trim(), color: newColor.color, bg: newColor.bg, user_id: session.user.id }])
       .select()
-
     if (error) { console.error(error); setSaving(false); return }
-
     setWallets([...wallets, data[0]])
     setNewName('')
     setNewColor(colorOptions[0])
@@ -76,18 +72,35 @@ function Wallets({ session }) {
     setSaving(false)
   }
 
+  async function handleDeleteTx(id) {
+    const ok = window.confirm('¿Eliminar este movimiento?')
+    if (!ok) return
+    const { error } = await supabase.from('transactions').delete().eq('id', id)
+    if (!error) setTransactions(transactions.filter(t => t.id !== id))
+  }
+
+  function toggleExpand(walletName, type) {
+    if (expanded?.wallet === walletName && expanded?.type === type) {
+      setExpanded(null)
+    } else {
+      setExpanded({ wallet: walletName, type })
+    }
+  }
+
   const walletSummary = transactions.reduce((acc, t) => {
-    if (!acc[t.wallet]) acc[t.wallet] = { income: 0, expense: 0 }
+    if (!acc[t.wallet]) acc[t.wallet] = { income: 0, expense: 0, movements: [] }
     if (t.type === 'income')  acc[t.wallet].income  += t.amount
     if (t.type === 'expense') acc[t.wallet].expense += t.amount
+    acc[t.wallet].movements.push(t)
     return acc
   }, {})
 
   const walletsWithBalance = wallets.map(w => ({
     ...w,
-    income:  walletSummary[w.name]?.income  || 0,
-    expense: walletSummary[w.name]?.expense || 0,
-    balance: (walletSummary[w.name]?.income || 0) - (walletSummary[w.name]?.expense || 0),
+    income:    walletSummary[w.name]?.income    || 0,
+    expense:   walletSummary[w.name]?.expense   || 0,
+    balance:   (walletSummary[w.name]?.income   || 0) - (walletSummary[w.name]?.expense || 0),
+    movements: walletSummary[w.name]?.movements || [],
   }))
 
   const totalBalance = walletsWithBalance.reduce((sum, w) => sum + w.balance, 0)
@@ -120,44 +133,26 @@ function Wallets({ session }) {
       {showForm && (
         <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '20px', marginBottom: '16px' }}>
           <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#333', marginBottom: '14px' }}>Nueva billetera</h3>
-
           <div style={{ marginBottom: '12px' }}>
             <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Nombre</label>
-            <input
-              style={inputStyle}
-              placeholder="Ej: Daviplata, Ahorro, etc."
-              value={newName}
-              onChange={e => setNewName(e.target.value)}
-            />
+            <input style={inputStyle} placeholder="Ej: Daviplata, Ahorro..." value={newName} onChange={e => setNewName(e.target.value)} />
           </div>
-
           <div style={{ marginBottom: '16px' }}>
             <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '8px' }}>Color</label>
             <div style={{ display: 'flex', gap: '8px' }}>
               {colorOptions.map(c => (
-                <div
-                  key={c.color}
-                  onClick={() => setNewColor(c)}
-                  style={{
-                    width: '28px', height: '28px', borderRadius: '50%',
-                    background: c.color, cursor: 'pointer',
-                    border: newColor.color === c.color ? '3px solid #333' : '3px solid transparent',
-                  }}
-                />
+                <div key={c.color} onClick={() => setNewColor(c)} style={{
+                  width: '28px', height: '28px', borderRadius: '50%', background: c.color, cursor: 'pointer',
+                  border: newColor.color === c.color ? '3px solid #333' : '3px solid transparent',
+                }} />
               ))}
             </div>
           </div>
-
           <div style={{ display: 'flex', gap: '8px' }}>
-            <button
-              onClick={() => setShowForm(false)}
-              style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid #eee', background: 'transparent', fontSize: '13px', color: '#888', cursor: 'pointer' }}>
+            <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid #eee', background: 'transparent', fontSize: '13px', color: '#888', cursor: 'pointer' }}>
               Cancelar
             </button>
-            <button
-              onClick={handleAddWallet}
-              disabled={saving}
-              style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+            <button onClick={handleAddWallet} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
               {saving ? 'Guardando...' : 'Guardar billetera'}
             </button>
           </div>
@@ -171,36 +166,125 @@ function Wallets({ session }) {
         <div style={{ fontSize: '12px', opacity: 0.7, marginTop: '6px' }}>{walletsWithBalance.length} billeteras</div>
       </div>
 
-      {/* Tarjetas — responsivas */}
+      {/* Tarjetas */}
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '14px' }}>
-        {walletsWithBalance.map(w => (
-          <div key={w.name} style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '20px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-              <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: w.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <Wallet size={18} color={w.color} />
-              </div>
-              <span style={{ fontWeight: '600', fontSize: '15px', color: '#333' }}>{w.name}</span>
-            </div>
+        {walletsWithBalance.map(w => {
+          const incomeMovs  = w.movements.filter(t => t.type === 'income')
+          const expenseMovs = w.movements.filter(t => t.type === 'expense')
+          const isExpandedIncome  = expanded?.wallet === w.name && expanded?.type === 'income'
+          const isExpandedExpense = expanded?.wallet === w.name && expanded?.type === 'expense'
 
-            <div style={{ marginBottom: '16px' }}>
-              <div style={{ fontSize: '11px', color: '#999', marginBottom: '4px', textTransform: 'uppercase' }}>Saldo</div>
-              <div style={{ fontSize: '22px', fontWeight: '700', color: w.balance >= 0 ? '#333' : '#D85A30' }}>
-                {formatCOP(w.balance)}
-              </div>
-            </div>
+          return (
+            <div key={w.name} style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', overflow: 'hidden' }}>
+              <div style={{ padding: '20px' }}>
 
-            <div style={{ display: 'flex', gap: '12px' }}>
-              <div style={{ flex: 1, background: '#E1F5EE', borderRadius: '8px', padding: '10px' }}>
-                <div style={{ fontSize: '10px', color: '#1D9E75', marginBottom: '3px' }}>INGRESOS</div>
-                <div style={{ fontSize: '13px', fontWeight: '600', color: '#1D9E75' }}>+{formatCOP(w.income)}</div>
+                {/* Header */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: w.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Wallet size={18} color={w.color} />
+                  </div>
+                  <span style={{ fontWeight: '600', fontSize: '15px', color: '#333' }}>{w.name}</span>
+                </div>
+
+                {/* Saldo */}
+                <div style={{ marginBottom: '16px' }}>
+                  <div style={{ fontSize: '11px', color: '#999', marginBottom: '4px', textTransform: 'uppercase' }}>Saldo</div>
+                  <div style={{ fontSize: '22px', fontWeight: '700', color: w.balance >= 0 ? '#333' : '#D85A30' }}>
+                    {formatCOP(w.balance)}
+                  </div>
+                </div>
+
+                {/* Botones ingresos y gastos */}
+                <div style={{ display: 'flex', gap: '12px' }}>
+                  <button
+                    onClick={() => toggleExpand(w.name, 'income')}
+                    style={{
+                      flex: 1, background: isExpandedIncome ? '#1D9E75' : '#E1F5EE',
+                      borderRadius: '8px', padding: '10px', border: 'none', cursor: 'pointer',
+                      textAlign: 'left',
+                    }}>
+                    <div style={{ fontSize: '10px', color: isExpandedIncome ? '#fff' : '#1D9E75', marginBottom: '3px' }}>INGRESOS</div>
+                    <div style={{ fontSize: '13px', fontWeight: '600', color: isExpandedIncome ? '#fff' : '#1D9E75' }}>
+                      +{formatCOP(w.income)}
+                    </div>
+                    {incomeMovs.length > 0 && (
+                      <div style={{ fontSize: '10px', color: isExpandedIncome ? 'rgba(255,255,255,0.7)' : '#6dbfa0', marginTop: '2px' }}>
+                        {incomeMovs.length} mov. — ver
+                      </div>
+                    )}
+                  </button>
+
+                  <button
+                    onClick={() => toggleExpand(w.name, 'expense')}
+                    style={{
+                      flex: 1, background: isExpandedExpense ? '#D85A30' : '#FAECE7',
+                      borderRadius: '8px', padding: '10px', border: 'none', cursor: 'pointer',
+                      textAlign: 'left',
+                    }}>
+                    <div style={{ fontSize: '10px', color: isExpandedExpense ? '#fff' : '#D85A30', marginBottom: '3px' }}>GASTOS</div>
+                    <div style={{ fontSize: '13px', fontWeight: '600', color: isExpandedExpense ? '#fff' : '#D85A30' }}>
+                      -{formatCOP(w.expense)}
+                    </div>
+                    {expenseMovs.length > 0 && (
+                      <div style={{ fontSize: '10px', color: isExpandedExpense ? 'rgba(255,255,255,0.7)' : '#e09070', marginTop: '2px' }}>
+                        {expenseMovs.length} mov. — ver
+                      </div>
+                    )}
+                  </button>
+                </div>
               </div>
-              <div style={{ flex: 1, background: '#FAECE7', borderRadius: '8px', padding: '10px' }}>
-                <div style={{ fontSize: '10px', color: '#D85A30', marginBottom: '3px' }}>GASTOS</div>
-                <div style={{ fontSize: '13px', fontWeight: '600', color: '#D85A30' }}>-{formatCOP(w.expense)}</div>
-              </div>
+
+              {/* Lista desplegable */}
+              {(isExpandedIncome || isExpandedExpense) && (
+                <div style={{ borderTop: '1px solid #f5f5f5' }}>
+                  <div style={{
+                    padding: '10px 20px 6px',
+                    display: 'flex', justifyContent: 'space-between', alignItems: 'center'
+                  }}>
+                    <span style={{ fontSize: '12px', fontWeight: '500', color: isExpandedIncome ? '#1D9E75' : '#D85A30' }}>
+                      {isExpandedIncome ? 'Ingresos' : 'Gastos'} en {w.name}
+                    </span>
+                    <button onClick={() => setExpanded(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc' }}>
+                      <X size={14} />
+                    </button>
+                  </div>
+
+                  <div style={{ padding: '0 20px' }}>
+                    {(isExpandedIncome ? incomeMovs : expenseMovs).map(t => (
+                      <div key={t.id} style={{
+                        display: 'flex', alignItems: 'center', gap: '10px',
+                        padding: '9px 0', borderBottom: '1px solid #f5f5f5',
+                      }}>
+                        <div style={{ flex: 1, minWidth: 0 }}>
+                          <div style={{ fontSize: '13px', fontWeight: '500', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                            {t.description}
+                          </div>
+                          <div style={{ fontSize: '11px', color: '#aaa', marginTop: '1px' }}>
+                            {t.category} · {t.date}
+                          </div>
+                        </div>
+                        <div style={{
+                          fontSize: '13px', fontWeight: '600', flexShrink: 0,
+                          color: t.type === 'income' ? '#1D9E75' : '#D85A30',
+                        }}>
+                          {t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
+                        </div>
+                        <button
+                          onClick={() => handleDeleteTx(t.id)}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc', padding: '4px', flexShrink: 0 }}
+                          onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}
+                          onMouseLeave={e => e.currentTarget.style.color = '#ccc'}
+                        >
+                          <Trash2 size={13} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
-          </div>
-        ))}
+          )
+        })}
       </div>
     </div>
   )
