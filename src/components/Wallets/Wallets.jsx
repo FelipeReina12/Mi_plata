@@ -201,15 +201,14 @@ function Wallets({ session }) {
                     style={{
                       flex: 1, background: isExpandedIncome ? '#1D9E75' : '#E1F5EE',
                       borderRadius: '8px', padding: '10px', border: 'none', cursor: 'pointer',
-                      textAlign: 'left',
+                      textAlign: 'center',
                     }}>
-                    <div style={{ fontSize: '10px', color: isExpandedIncome ? '#fff' : '#1D9E75', marginBottom: '3px' }}>INGRESOS</div>
                     <div style={{ fontSize: '13px', fontWeight: '600', color: isExpandedIncome ? '#fff' : '#1D9E75' }}>
-                      +{formatCOP(w.income)}
+                      Ingresos
                     </div>
                     {incomeMovs.length > 0 && (
                       <div style={{ fontSize: '10px', color: isExpandedIncome ? 'rgba(255,255,255,0.7)' : '#6dbfa0', marginTop: '2px' }}>
-                        {incomeMovs.length} mov. — ver
+                        {incomeMovs.length} movimientos.
                       </div>
                     )}
                   </button>
@@ -219,15 +218,14 @@ function Wallets({ session }) {
                     style={{
                       flex: 1, background: isExpandedExpense ? '#D85A30' : '#FAECE7',
                       borderRadius: '8px', padding: '10px', border: 'none', cursor: 'pointer',
-                      textAlign: 'left',
+                      textAlign: 'center',
                     }}>
-                    <div style={{ fontSize: '10px', color: isExpandedExpense ? '#fff' : '#D85A30', marginBottom: '3px' }}>GASTOS</div>
                     <div style={{ fontSize: '13px', fontWeight: '600', color: isExpandedExpense ? '#fff' : '#D85A30' }}>
-                      -{formatCOP(w.expense)}
+                      Gastos
                     </div>
                     {expenseMovs.length > 0 && (
                       <div style={{ fontSize: '10px', color: isExpandedExpense ? 'rgba(255,255,255,0.7)' : '#e09070', marginTop: '2px' }}>
-                        {expenseMovs.length} mov. — ver
+                        {expenseMovs.length} movimientos.
                       </div>
                     )}
                   </button>
