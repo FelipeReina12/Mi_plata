@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
-import { Trash2 } from 'lucide-react'
+import { Trash2, ArrowRightLeft } from 'lucide-react'
 import { supabase } from '../../supabaseClient'
 
-const categoryOptions = ['Todas', 'Comida', 'Transporte', 'Servicios', 'Entretenimiento', 'Salario', 'Otros ingresos', 'Otros']
+const categoryOptions = ['Todas', 'Comida', 'Transporte', 'Servicios', 'Entretenimiento', 'Salario', 'Otros ingresos', 'Transferencia', 'Otros']
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
@@ -48,7 +48,7 @@ function Movements() {
     .filter(t => filterCat  === 'Todas' || t.category === filterCat)
 
   const btnFilter = (active) => ({
-    padding: '7px 14px', borderRadius: '8px', border: 'none',
+    padding: '7px 14px', borderRadius: '8px',
     fontSize: '13px', cursor: 'pointer', fontWeight: '500',
     background: active ? '#7F77DD' : '#fff',
     color:      active ? '#fff'    : '#888',
@@ -63,11 +63,12 @@ function Movements() {
 
       <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '16px 20px', marginBottom: '16px' }}>
 
-        {/* Tipo — centrado */}
-        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', justifyContent: 'center' }}>
-          <button style={btnFilter(filterType === 'all')}     onClick={() => setFilterType('all')}>    Todos    </button>
-          <button style={btnFilter(filterType === 'income')}  onClick={() => setFilterType('income')}>  Ingresos </button>
-          <button style={btnFilter(filterType === 'expense')} onClick={() => setFilterType('expense')}> Gastos   </button>
+        {/* Tipo — centrado, incluyendo transferencias */}
+        <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+          <button style={btnFilter(filterType === 'all')}      onClick={() => setFilterType('all')}>      Todos        </button>
+          <button style={btnFilter(filterType === 'income')}   onClick={() => setFilterType('income')}>   Ingresos     </button>
+          <button style={btnFilter(filterType === 'expense')}  onClick={() => setFilterType('expense')}>  Gastos       </button>
+          <button style={btnFilter(filterType === 'transfer')} onClick={() => setFilterType('transfer')}> Transferencias</button>
         </div>
 
         {/* Categoría */}
@@ -97,25 +98,35 @@ function Movements() {
             display: 'flex', alignItems: 'center', gap: '12px',
             padding: '10px 0', borderBottom: '1px solid #f5f5f5',
           }}>
-            <div style={{
-              width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0,
-              background: t.type === 'income' ? '#1D9E75' : '#D85A30',
-            }} />
 
+            {/* Indicador tipo */}
+            {t.type === 'transfer'
+              ? <ArrowRightLeft size={14} color="#7F77DD" style={{ flexShrink: 0 }} />
+              : <div style={{
+                  width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0,
+                  background: t.type === 'income' ? '#1D9E75' : '#D85A30',
+                }} />
+            }
+
+            {/* Info */}
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: '13px', fontWeight: '500', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.description}</div>
+              <div style={{ fontSize: '13px', fontWeight: '500', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                {t.description}
+              </div>
               <div style={{ fontSize: '11px', color: '#aaa', marginTop: '2px' }}>
                 {t.category} · {t.wallet} · {t.date}
               </div>
             </div>
 
+            {/* Monto */}
             <div style={{
               fontSize: '13px', fontWeight: '600', flexShrink: 0,
-              color: t.type === 'income' ? '#1D9E75' : '#D85A30',
+              color: t.type === 'transfer' ? '#7F77DD' : t.type === 'income' ? '#1D9E75' : '#D85A30',
             }}>
-              {t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
+              {t.type === 'transfer' ? '↔' : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
             </div>
 
+            {/* Eliminar */}
             <button
               onClick={() => handleDelete(t.id)}
               style={{

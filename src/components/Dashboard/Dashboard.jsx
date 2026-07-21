@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import MetricCard from './MetricCard'
 import TransactionForm from '../Transactions/TransactionForm'
+import TransferForm from '../Transactions/TransferForm'
 import { supabase } from '../../supabaseClient'
 
 function formatCOP(num) {
@@ -47,11 +48,16 @@ function Dashboard({ session }) {
     }
   }
 
+  function handleTransfer(newTxs) {
+    setTransactions([...newTxs, ...transactions])
+  }
+
+  // Solo ingresos y gastos reales para el saldo
   const totalIncome  = transactions.filter(t => t.type === 'income') .reduce((sum, t) => sum + t.amount, 0)
   const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
   const totalBalance = totalIncome - totalExpense
 
-  // Fecha actual dinámica — siempre muestra el mes y año reales del sistema
+  // Fecha actual dinámica
   const currentMonth = new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric' })
   const currentMonthLabel = currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)
 
@@ -75,6 +81,7 @@ function Dashboard({ session }) {
       </div>
 
       <TransactionForm onAdd={handleAdd} />
+      <TransferForm session={session} onTransfer={handleTransfer} />
 
       <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '20px' }}>
         <h3 style={{ marginBottom: '16px', fontSize: '14px', color: '#333' }}>Últimos movimientos</h3>
@@ -88,12 +95,24 @@ function Dashboard({ session }) {
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
             padding: '10px 0', borderBottom: '1px solid #f5f5f5'
           }}>
-            <div>
-              <div style={{ fontSize: '13px', fontWeight: '500', color: '#333' }}>{t.description}</div>
-              <div style={{ fontSize: '11px', color: '#aaa', marginTop: '2px' }}>{t.category} · {t.wallet} · {t.date}</div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
+              {t.type === 'transfer'
+                ? <span style={{ color: '#7F77DD', fontSize: '16px', flexShrink: 0 }}>⇄</span>
+                : <div style={{
+                    width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0,
+                    background: t.type === 'income' ? '#1D9E75' : '#D85A30',
+                  }} />
+              }
+              <div style={{ minWidth: 0 }}>
+                <div style={{ fontSize: '13px', fontWeight: '500', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.description}</div>
+                <div style={{ fontSize: '11px', color: '#aaa', marginTop: '2px' }}>{t.category} · {t.wallet} · {t.date}</div>
+              </div>
             </div>
-            <div style={{ fontSize: '13px', fontWeight: '600', color: t.type === 'income' ? '#1D9E75' : '#D85A30' }}>
-              {t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
+            <div style={{
+              fontSize: '13px', fontWeight: '600', flexShrink: 0, marginLeft: '10px',
+              color: t.type === 'transfer' ? '#7F77DD' : t.type === 'income' ? '#1D9E75' : '#D85A30',
+            }}>
+              {t.type === 'transfer' ? '↔' : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
             </div>
           </div>
         ))}

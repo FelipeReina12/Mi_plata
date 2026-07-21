@@ -1,0 +1,159 @@
+import { useState, useEffect } from 'react'
+import { supabase } from '../../supabaseClient'
+import { ArrowRightLeft } from 'lucide-react'
+
+const defaultWalletNames = ['Efectivo', 'Nequi', 'Banco Falabella']
+
+function TransferForm({ session, onTransfer }) {
+  const [walletNames,  setWalletNames]  = useState(defaultWalletNames)
+  const [from,         setFrom]         = useState('')
+  const [to,           setTo]           = useState('')
+  const [amount,       setAmount]       = useState('')
+  const [description,  setDescription]  = useState('Transferencia')
+  const [saving,       setSaving]       = useState(false)
+  const [error,        setError]        = useState('')
+
+  useEffect(() => {
+    async function loadWallets() {
+      const { data } = await supabase.from('wallets').select('name')
+      if (data) {
+        const names = data.map(w => w.name)
+        const merged = [...new Set([...defaultWalletNames, ...names])]
+        setWalletNames(merged)
+        setFrom(merged[0])
+        setTo(merged[1] || merged[0])
+      } else {
+        setFrom(defaultWalletNames[0])
+        setTo(defaultWalletNames[1])
+      }
+    }
+    loadWallets()
+  }, [])
+
+  async function handleTransfer() {
+    setError('')
+    if (!amount || parseInt(amount) <= 0) return setError('Ingresa un monto válido')
+    if (from === to) return setError('Las billeteras deben ser diferentes')
+
+    setSaving(true)
+    const date = new Date().toISOString().split('T')[0]
+    const desc = description.trim() || 'Transferencia'
+
+    const { data, error } = await supabase
+      .from('transactions')
+      .insert([
+        // Salida de la billetera origen
+        {
+          description: `${desc} → ${to}`,
+          amount:      parseInt(amount),
+          type:        'transfer',
+          category:    'Transferencia',
+          wallet:      from,
+          date,
+          user_id:     session.user.id,
+        },
+        // Entrada a la billetera destino
+        {
+          description: `${desc} ← ${from}`,
+          amount:      parseInt(amount),
+          type:        'transfer',
+          category:    'Transferencia',
+          wallet:      to,
+          date,
+          user_id:     session.user.id,
+        },
+      ])
+      .select()
+
+    if (error) {
+      console.error(error)
+      setError('Error al registrar la transferencia')
+      setSaving(false)
+      return
+    }
+
+    onTransfer(data)
+    setAmount('')
+    setDescription('Transferencia')
+    setSaving(false)
+  }
+
+  const inputStyle = {
+    width: '100%', padding: '8px 10px', fontSize: '14px',
+    border: '1px solid #ddd', borderRadius: '8px',
+    background: '#fff', color: '#333',
+  }
+
+  return (
+    <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '20px', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+        <ArrowRightLeft size={16} color="#7F77DD" />
+        <h3 style={{ fontSize: '14px', color: '#333', fontWeight: '600' }}>Transferencia entre billeteras</h3>
+      </div>
+
+      {/* Origen y destino */}
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '8px', alignItems: 'center', marginBottom: '12px' }}>
+        <div>
+          <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Desde</label>
+          <select style={inputStyle} value={from} onChange={e => setFrom(e.target.value)}>
+            {walletNames.map(w => <option key={w}>{w}</option>)}
+          </select>
+        </div>
+        <div style={{ textAlign: 'center', color: '#7F77DD', marginTop: '18px' }}>
+          <ArrowRightLeft size={18} />
+        </div>
+        <div>
+          <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Hacia</label>
+          <select style={inputStyle} value={to} onChange={e => setTo(e.target.value)}>
+            {walletNames.map(w => <option key={w}>{w}</option>)}
+          </select>
+        </div>
+      </div>
+
+      {/* Monto */}
+      <div style={{ marginBottom: '12px' }}>
+        <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Monto ($)</label>
+        <input
+          style={inputStyle}
+          type="number"
+          placeholder="0"
+          value={amount}
+          onChange={e => setAmount(e.target.value)}
+        />
+      </div>
+
+      {/* Descripción */}
+      <div style={{ marginBottom: '14px' }}>
+        <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Descripción (opcional)</label>
+        <input
+          style={inputStyle}
+          type="text"
+          placeholder="Ej: Ahorro mensual"
+          value={description}
+          onChange={e => setDescription(e.target.value)}
+        />
+      </div>
+
+      {error && (
+        <div style={{ background: '#FAECE7', color: '#712B13', fontSize: '12px', padding: '10px 12px', borderRadius: '8px', marginBottom: '12px' }}>
+          {error}
+        </div>
+      )}
+
+      <button
+        onClick={handleTransfer}
+        disabled={saving}
+        style={{
+          width: '100%', padding: '10px', borderRadius: '8px', border: 'none',
+          background: saving ? '#bbb' : '#7F77DD', color: '#fff',
+          fontWeight: '600', fontSize: '14px', cursor: saving ? 'default' : 'pointer',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+        }}>
+        <ArrowRightLeft size={15} />
+        {saving ? 'Registrando...' : 'Realizar transferencia'}
+      </button>
+    </div>
+  )
+}
+
+export default TransferForm
