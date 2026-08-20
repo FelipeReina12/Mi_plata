@@ -9,6 +9,7 @@ import Movements from './components/Transactions/Movements'
 import Wallets from './components/Wallets/Wallets'
 import Budgets from './components/Budgets/Budgets'
 import Subscriptions from './components/Subscriptions/Subscriptions'
+import Advisor from './components/Advisor/Advisor'
 import Settings from './components/Settings/Settings'
 import ResetPassword from './components/Auth/ResetPassword'
 
@@ -68,7 +69,8 @@ function App() {
           {page === 'wallets'   && <Wallets session={session} />}
           {page === 'budgets'   && <Budgets session={session} />}
           {page === 'subscriptions' && <Subscriptions session={session} />}
-          {page === 'settings'  && <Settings darkMode={darkMode} setDarkMode={setDarkMode} />}
+          {page === 'advisor'       && <Advisor session={session} setPage={setPage} />}
+          {page === 'settings'      && <Settings darkMode={darkMode} setDarkMode={setDarkMode} />}
         </motion.div>
       </AnimatePresence>
     </MainLayout>
