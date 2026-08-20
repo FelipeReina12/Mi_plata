@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
 import { Plus, Trash2, Calendar, Repeat } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 
 const categoryOptions = ['Entretenimiento', 'Servicios', 'Vivienda', 'Educación', 'Salud', 'Otros']
 
@@ -118,44 +119,53 @@ function Subscriptions({ session }) {
         </button>
       </div>
 
-      {showForm && (
-        <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '14px' }}>Nuevo gasto recurrente</h3>
+      <AnimatePresence>
+        {showForm && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            style={{ overflow: 'hidden', marginBottom: '16px' }}
+          >
+            <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '14px' }}>Nuevo gasto recurrente</h3>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
-            <div>
-              <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Nombre</label>
-              <input style={inputStyle} placeholder="Ej: Netflix, Arriendo..." value={newName} onChange={e => setNewName(e.target.value)} />
-            </div>
-            <div>
-              <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Monto mensual ($)</label>
-              <input style={inputStyle} type="number" placeholder="0" value={newAmount} onChange={e => setNewAmount(e.target.value)} />
-            </div>
-          </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+                <div>
+                  <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Nombre</label>
+                  <input style={inputStyle} placeholder="Ej: Netflix, Arriendo..." value={newName} onChange={e => setNewName(e.target.value)} />
+                </div>
+                <div>
+                  <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Monto mensual ($)</label>
+                  <input style={inputStyle} type="number" placeholder="0" value={newAmount} onChange={e => setNewAmount(e.target.value)} />
+                </div>
+              </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
-            <div>
-              <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Categoría</label>
-              <select style={inputStyle} value={newCategory} onChange={e => setNewCategory(e.target.value)}>
-                {categoryOptions.map(c => <option key={c}>{c}</option>)}
-              </select>
-            </div>
-            <div>
-              <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Próximo pago</label>
-              <input style={inputStyle} type="date" value={newDate} onChange={e => setNewDate(e.target.value)} />
-            </div>
-          </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
+                <div>
+                  <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Categoría</label>
+                  <select style={inputStyle} value={newCategory} onChange={e => setNewCategory(e.target.value)}>
+                    {categoryOptions.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Próximo pago</label>
+                  <input style={inputStyle} type="date" value={newDate} onChange={e => setNewDate(e.target.value)} />
+                </div>
+              </div>
 
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
-              Cancelar
-            </button>
-            <button onClick={handleAddSubscription} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
-              {saving ? 'Guardando...' : 'Guardar'}
-            </button>
-          </div>
-        </div>
-      )}
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                  Cancelar
+                </button>
+                <button onClick={handleAddSubscription} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+                  {saving ? 'Guardando...' : 'Guardar'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--bg-card)', padding: '16px 20px', borderRadius: '12px', border: '1px solid var(--border-light)', marginBottom: '20px' }}>
         <div style={{ background: 'rgba(216, 90, 48, 0.1)', padding: '10px', borderRadius: '10px' }}>

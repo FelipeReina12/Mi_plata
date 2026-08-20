@@ -3,6 +3,7 @@ import MetricCard from './MetricCard'
 import TransactionForm from '../Transactions/TransactionForm'
 import TransferForm from '../Transactions/TransferForm'
 import { supabase } from '../../supabaseClient'
+import { motion } from 'framer-motion'
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
@@ -82,16 +83,21 @@ function Dashboard({ session, setPage }) {
         Resumen — {currentMonthLabel}
       </h2>
 
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
-        gap: '14px',
-        marginBottom: '24px'
-      }}>
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+        style={{
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
+          gap: '14px',
+          marginBottom: '24px'
+        }}
+      >
         <MetricCard label="Saldo total" value={formatCOP(totalBalance)} sub="Todas las cuentas" color="var(--text-main)" />
         <MetricCard label="Ingresos"    value={formatCOP(totalIncome)}   sub="Este mes"         color="#1D9E75" />
         <MetricCard label="Gastos"      value={formatCOP(totalExpense)}  sub="Este mes"         color="#D85A30" />
-      </div>
+      </motion.div>
 
       <TransactionForm onAdd={handleAdd} />
       <TransferForm session={session} onTransfer={handleTransfer} />
@@ -127,11 +133,17 @@ function Dashboard({ session, setPage }) {
           <p style={{ color: 'var(--text-light)', fontSize: '13px' }}>Aún no hay movimientos. ¡Registra el primero!</p>
         )}
 
-        {transactions.map(t => (
-          <div key={t.id} style={{
-            display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            padding: '10px 0', borderBottom: '1px solid var(--border-dim)'
-          }}>
+        {transactions.map((t, i) => (
+          <motion.div
+            key={t.id}
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: i * 0.05, duration: 0.2 }}
+            style={{
+              display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+              padding: '10px 0', borderBottom: '1px solid var(--border-dim)'
+            }}
+          >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
               {t.type === 'transfer'
                 ? <span style={{ color: '#7F77DD', fontSize: '16px', flexShrink: 0 }}>⇄</span>
@@ -151,7 +163,7 @@ function Dashboard({ session, setPage }) {
             }}>
               {t.type === 'transfer' ? (t.description.includes('→') ? '-' : '+') : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </div>

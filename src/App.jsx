@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { AnimatePresence, motion } from 'framer-motion'
 import { supabase } from './supabaseClient'
 import MainLayout from './components/Layout/MainLayout'
 import Dashboard from './components/Dashboard/Dashboard'
@@ -53,13 +54,23 @@ function App() {
 
   return (
     <MainLayout page={page} setPage={setPage} session={session} darkMode={darkMode} setDarkMode={setDarkMode}>
-      {page === 'dashboard' && <Dashboard session={session} setPage={setPage} />}
-      {page === 'reports'   && <Reports />}
-      {page === 'movements' && <Movements />}
-      {page === 'wallets'   && <Wallets session={session} />}
-      {page === 'budgets'   && <Budgets session={session} />}
-      {page === 'subscriptions' && <Subscriptions session={session} />}
-      {page === 'settings'  && <Settings darkMode={darkMode} setDarkMode={setDarkMode} />}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={page}
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -15 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+        >
+          {page === 'dashboard' && <Dashboard session={session} setPage={setPage} />}
+          {page === 'reports'   && <Reports />}
+          {page === 'movements' && <Movements />}
+          {page === 'wallets'   && <Wallets session={session} />}
+          {page === 'budgets'   && <Budgets session={session} />}
+          {page === 'subscriptions' && <Subscriptions session={session} />}
+          {page === 'settings'  && <Settings darkMode={darkMode} setDarkMode={setDarkMode} />}
+        </motion.div>
+      </AnimatePresence>
     </MainLayout>
   )
 }

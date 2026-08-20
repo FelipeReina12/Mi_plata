@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
 import { Plus, Trash2, Target } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 
 const categoryOptions = ['Comida', 'Transporte', 'Servicios', 'Entretenimiento', 'Otros']
 
@@ -96,33 +97,42 @@ function Budgets({ session }) {
         </button>
       </div>
 
-      {showForm && (
-        <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '14px' }}>Nuevo presupuesto mensual</h3>
+      <AnimatePresence>
+        {showForm && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            style={{ overflow: 'hidden', marginBottom: '16px' }}
+          >
+            <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '14px' }}>Nuevo presupuesto mensual</h3>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
-            <div>
-              <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Categoría</label>
-              <select style={inputStyle} value={newCategory} onChange={e => setNewCategory(e.target.value)}>
-                {categoryOptions.map(c => <option key={c}>{c}</option>)}
-              </select>
-            </div>
-            <div>
-              <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Límite mensual ($)</label>
-              <input style={inputStyle} type="number" placeholder="0" value={newAmount} onChange={e => setNewAmount(e.target.value)} />
-            </div>
-          </div>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
+                <div>
+                  <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Categoría</label>
+                  <select style={inputStyle} value={newCategory} onChange={e => setNewCategory(e.target.value)}>
+                    {categoryOptions.map(c => <option key={c}>{c}</option>)}
+                  </select>
+                </div>
+                <div>
+                  <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Límite mensual ($)</label>
+                  <input style={inputStyle} type="number" placeholder="0" value={newAmount} onChange={e => setNewAmount(e.target.value)} />
+                </div>
+              </div>
 
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
-              Cancelar
-            </button>
-            <button onClick={handleAddBudget} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
-              {saving ? 'Guardando...' : 'Guardar presupuesto'}
-            </button>
-          </div>
-        </div>
-      )}
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                  Cancelar
+                </button>
+                <button onClick={handleAddBudget} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+                  {saving ? 'Guardando...' : 'Guardar presupuesto'}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {budgets.length === 0 ? (
         <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '40px 20px', textAlign: 'center' }}>

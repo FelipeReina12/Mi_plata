@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
 import { Wallet, Plus, ArrowRightLeft, Trash2, X } from 'lucide-react'
+import { AnimatePresence, motion } from 'framer-motion'
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
@@ -130,34 +131,43 @@ function Wallets({ session }) {
       </div>
 
       {/* Formulario nueva billetera */}
-      {showForm && (
-        <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '14px' }}>Nueva billetera</h3>
-          <div style={{ marginBottom: '12px' }}>
-            <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Nombre</label>
-            <input style={inputStyle} placeholder="Ej: Daviplata, Ahorro..." value={newName} onChange={e => setNewName(e.target.value)} />
-          </div>
-          <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>Color</label>
-            <div style={{ display: 'flex', gap: '8px' }}>
-              {colorOptions.map(c => (
-                <div key={c.color} onClick={() => setNewColor(c)} style={{
-                  width: '28px', height: '28px', borderRadius: '50%', background: c.color, cursor: 'pointer',
-                  border: newColor.color === c.color ? '3px solid var(--text-main)' : '3px solid transparent',
-                }} />
-              ))}
+      <AnimatePresence>
+        {showForm && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            style={{ overflow: 'hidden', marginBottom: '16px' }}
+          >
+            <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px' }}>
+              <h3 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '14px' }}>Nueva billetera</h3>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Nombre</label>
+                <input style={inputStyle} placeholder="Ej: Daviplata, Ahorro..." value={newName} onChange={e => setNewName(e.target.value)} />
+              </div>
+              <div style={{ marginBottom: '16px' }}>
+                <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>Color</label>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {colorOptions.map(c => (
+                    <div key={c.color} onClick={() => setNewColor(c)} style={{
+                      width: '28px', height: '28px', borderRadius: '50%', background: c.color, cursor: 'pointer',
+                      border: newColor.color === c.color ? '3px solid var(--text-main)' : '3px solid transparent',
+                    }} />
+                  ))}
+                </div>
+              </div>
+              <div style={{ display: 'flex', gap: '8px' }}>
+                <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                  Cancelar
+                </button>
+                <button onClick={handleAddWallet} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+                  {saving ? 'Guardando...' : 'Guardar billetera'}
+                </button>
+              </div>
             </div>
-          </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
-              Cancelar
-            </button>
-            <button onClick={handleAddWallet} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
-              {saving ? 'Guardando...' : 'Guardar billetera'}
-            </button>
-          </div>
-        </div>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Saldo total */}
       <div style={{ background: '#7F77DD', borderRadius: '16px', padding: '24px 28px', marginBottom: '24px', color: '#fff' }}>
@@ -233,53 +243,62 @@ function Wallets({ session }) {
               </div>
 
               {/* Lista desplegable */}
-              {(isExpandedIncome || isExpandedExpense) && (
-                <div style={{ borderTop: '1px solid var(--border-dim)' }}>
-                  <div style={{
-                    padding: '10px 20px 6px',
-                    display: 'flex', justifyContent: 'space-between', alignItems: 'center'
-                  }}>
-                    <span style={{ fontSize: '12px', fontWeight: '500', color: isExpandedIncome ? '#1D9E75' : '#D85A30' }}>
-                      {isExpandedIncome ? 'Ingresos' : 'Gastos'} en {w.name}
-                    </span>
-                    <button onClick={() => setExpanded(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)' }}>
-                      <X size={14} />
-                    </button>
-                  </div>
-
-                  <div style={{ padding: '0 20px' }}>
-                    {(isExpandedIncome ? incomeMovs : expenseMovs).map(t => (
-                      <div key={t.id} style={{
-                        display: 'flex', alignItems: 'center', gap: '10px',
-                        padding: '9px 0', borderBottom: '1px solid var(--border-dim)',
+              <AnimatePresence>
+                {(isExpandedIncome || isExpandedExpense) && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    style={{ overflow: 'hidden' }}
+                  >
+                    <div style={{ borderTop: '1px solid var(--border-dim)' }}>
+                      <div style={{
+                        padding: '10px 20px 6px',
+                        display: 'flex', justifyContent: 'space-between', alignItems: 'center'
                       }}>
-                        <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                            {t.description}
-                          </div>
-                          <div style={{ fontSize: '11px', color: 'var(--text-light)', marginTop: '1px' }}>
-                            {t.category} · {t.date}
-                          </div>
-                        </div>
-                        <div style={{
-                          fontSize: '13px', fontWeight: '600', flexShrink: 0,
-                          color: t.type === 'income' ? '#1D9E75' : '#D85A30',
-                        }}>
-                          {t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
-                        </div>
-                        <button
-                          onClick={() => handleDeleteTx(t.id)}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '4px', flexShrink: 0 }}
-                          onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}
-                          onMouseLeave={e => e.currentTarget.style.color = 'var(--text-lighter)'}
-                        >
-                          <Trash2 size={13} />
+                        <span style={{ fontSize: '12px', fontWeight: '500', color: isExpandedIncome ? '#1D9E75' : '#D85A30' }}>
+                          {isExpandedIncome ? 'Ingresos' : 'Gastos'} en {w.name}
+                        </span>
+                        <button onClick={() => setExpanded(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)' }}>
+                          <X size={14} />
                         </button>
                       </div>
-                    ))}
-                  </div>
-                </div>
-              )}
+
+                      <div style={{ padding: '0 20px' }}>
+                        {(isExpandedIncome ? incomeMovs : expenseMovs).map(t => (
+                          <div key={t.id} style={{
+                            display: 'flex', alignItems: 'center', gap: '10px',
+                            padding: '9px 0', borderBottom: '1px solid var(--border-dim)',
+                          }}>
+                            <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                {t.description}
+                              </div>
+                              <div style={{ fontSize: '11px', color: 'var(--text-light)', marginTop: '1px' }}>
+                                {t.category} · {t.date}
+                              </div>
+                            </div>
+                            <div style={{
+                              fontSize: '13px', fontWeight: '600', flexShrink: 0,
+                              color: t.type === 'income' ? '#1D9E75' : '#D85A30',
+                            }}>
+                              {t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
+                            </div>
+                            <button
+                              onClick={() => handleDeleteTx(t.id)}
+                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '4px', flexShrink: 0 }}
+                              onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}
+                              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-lighter)'}
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           )
         })}
