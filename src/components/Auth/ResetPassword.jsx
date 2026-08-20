@@ -27,18 +27,18 @@ function ResetPassword() {
 
   const inputStyle = {
     width: '100%', padding: '10px 12px', fontSize: '14px',
-    border: '1px solid #ddd', borderRadius: '8px',
-    background: '#fff', color: '#333', marginTop: '4px',
+    border: '1px solid var(--border-light)', borderRadius: '8px',
+    background: 'var(--bg-input)', color: 'var(--text-main)', marginTop: '4px',
   }
 
   return (
     <div style={{
-      minHeight: '100vh', background: '#F7F6F3',
+      minHeight: '100vh', background: 'var(--bg-app)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
       <div style={{
-        background: '#fff', borderRadius: '16px',
-        border: '1px solid #eee', padding: '40px',
+        background: 'var(--bg-card)', borderRadius: '16px',
+        border: '1px solid var(--border-light)', padding: '40px',
         width: '100%', maxWidth: '380px',
       }}>
 
@@ -46,19 +46,19 @@ function ResetPassword() {
           <div style={{ background: '#EEEDFE', borderRadius: '10px', padding: '8px' }}>
             <Wallet size={22} color="#7F77DD" />
           </div>
-          <span style={{ fontWeight: '700', fontSize: '20px', color: '#333' }}>MiPlata</span>
+          <span style={{ fontWeight: '700', fontSize: '20px', color: 'var(--text-main)' }}>MiPlata</span>
         </div>
 
-        <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#333', marginBottom: '6px' }}>Nueva contraseña</h2>
-        <p style={{ fontSize: '13px', color: '#999', marginBottom: '24px' }}>Elige una contraseña segura</p>
+        <h2 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '6px' }}>Nueva contraseña</h2>
+        <p style={{ fontSize: '13px', color: 'var(--text-light)', marginBottom: '24px' }}>Elige una contraseña segura</p>
 
         <div style={{ marginBottom: '14px' }}>
-          <label style={{ fontSize: '12px', color: '#666', fontWeight: '500' }}>Nueva contraseña</label>
+          <label style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>Nueva contraseña</label>
           <input style={inputStyle} type="password" placeholder="Mínimo 6 caracteres" value={password} onChange={e => setPassword(e.target.value)} />
         </div>
 
         <div style={{ marginBottom: '20px' }}>
-          <label style={{ fontSize: '12px', color: '#666', fontWeight: '500' }}>Confirmar contraseña</label>
+          <label style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>Confirmar contraseña</label>
           <input style={inputStyle} type="password" placeholder="Repite la contraseña" value={password2} onChange={e => setPassword2(e.target.value)} />
         </div>
 

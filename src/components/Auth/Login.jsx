@@ -39,18 +39,18 @@ function Login() {
 
   const inputStyle = {
     width: '100%', padding: '10px 12px', fontSize: '14px',
-    border: '1px solid #ddd', borderRadius: '8px',
-    background: '#fff', color: '#333', marginTop: '4px',
+    border: '1px solid var(--border-light)', borderRadius: '8px',
+    background: 'var(--bg-input)', color: 'var(--text-main)', marginTop: '4px',
   }
 
   return (
     <div style={{
-      minHeight: '100vh', background: '#F7F6F3',
+      minHeight: '100vh', background: 'var(--bg-app)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
     }}>
       <div style={{
-        background: '#fff', borderRadius: '16px',
-        border: '1px solid #eee', padding: '40px',
+        background: 'var(--bg-card)', borderRadius: '16px',
+        border: '1px solid var(--border-light)', padding: '40px',
         width: '100%', maxWidth: '380px',
       }}>
 
@@ -59,15 +59,15 @@ function Login() {
           <div style={{ background: '#EEEDFE', borderRadius: '10px', padding: '8px' }}>
             <Wallet size={22} color="#7F77DD" />
           </div>
-          <span style={{ fontWeight: '700', fontSize: '20px', color: '#333' }}>MiPlata</span>
+          <span style={{ fontWeight: '700', fontSize: '20px', color: 'var(--text-main)' }}>MiPlata</span>
         </div>
 
-        <h2 style={{ fontSize: '16px', fontWeight: '600', color: '#333', marginBottom: '6px' }}>
+        <h2 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '6px' }}>
           {mode === 'login'    ? 'Iniciar sesión'        :
            mode === 'register' ? 'Crear cuenta'          :
                                  'Restablecer contraseña'}
         </h2>
-        <p style={{ fontSize: '13px', color: '#999', marginBottom: '24px' }}>
+        <p style={{ fontSize: '13px', color: 'var(--text-light)', marginBottom: '24px' }}>
           {mode === 'login'    ? 'Bienvenido de vuelta'                  :
            mode === 'register' ? 'Empieza a controlar tus finanzas'      :
                                  'Te enviaremos un link a tu email'}
@@ -75,7 +75,7 @@ function Login() {
 
         {/* Email */}
         <div style={{ marginBottom: '14px' }}>
-          <label style={{ fontSize: '12px', color: '#666', fontWeight: '500' }}>Email</label>
+          <label style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>Email</label>
           <input
             style={inputStyle}
             type="email"
@@ -88,7 +88,7 @@ function Login() {
         {/* Contraseña — solo en login y register */}
         {mode !== 'forgot' && (
           <div style={{ marginBottom: '10px' }}>
-            <label style={{ fontSize: '12px', color: '#666', fontWeight: '500' }}>Contraseña</label>
+            <label style={{ fontSize: '12px', color: 'var(--text-muted)', fontWeight: '500' }}>Contraseña</label>
             <input
               style={inputStyle}
               type="password"
@@ -140,7 +140,7 @@ function Login() {
         </button>
 
         {/* Cambiar modo */}
-        <p style={{ textAlign: 'center', fontSize: '13px', color: '#999', marginTop: '20px' }}>
+        <p style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-muted)', marginTop: '20px' }}>
           {mode === 'forgot' ? (
             <span onClick={() => { setMode('login'); setError(''); setMessage('') }} style={{ color: '#7F77DD', cursor: 'pointer', fontWeight: '500' }}>
               Volver al inicio de sesión

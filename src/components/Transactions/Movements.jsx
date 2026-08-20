@@ -50,18 +50,18 @@ function Movements() {
   const btnFilter = (active) => ({
     padding: '7px 14px', borderRadius: '8px',
     fontSize: '13px', cursor: 'pointer', fontWeight: '500',
-    background: active ? '#7F77DD' : '#fff',
-    color:      active ? '#fff'    : '#888',
-    border:     active ? 'none'    : '1px solid #eee',
+    background: active ? '#7F77DD' : 'var(--bg-input)',
+    color:      active ? '#fff'    : 'var(--text-muted)',
+    border:     active ? '1px solid transparent' : '1px solid var(--border-light)',
   })
 
-  if (loading) return <p style={{ color: '#888', padding: '20px' }}>Cargando movimientos...</p>
+  if (loading) return <p style={{ color: 'var(--text-muted)', padding: '20px' }}>Cargando movimientos...</p>
 
   return (
     <div>
-      <h2 style={{ marginBottom: '20px', color: '#333', fontWeight: '600' }}>Movimientos</h2>
+      <h2 style={{ marginBottom: '20px', color: 'var(--text-main)', fontWeight: '600' }}>Movimientos</h2>
 
-      <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '16px 20px', marginBottom: '16px' }}>
+      <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '16px 20px', marginBottom: '16px' }}>
 
         {/* Tipo — centrado, incluyendo transferencias */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -76,27 +76,27 @@ function Movements() {
           value={filterCat}
           onChange={e => setFilterCat(e.target.value)}
           style={{
-            padding: '7px 10px', borderRadius: '8px', border: '1px solid #eee',
-            fontSize: '13px', color: '#555', background: '#fff', cursor: 'pointer',
+            padding: '7px 10px', borderRadius: '8px', border: '1px solid var(--border-light)',
+            fontSize: '13px', color: 'var(--text-main)', background: 'var(--bg-input)', cursor: 'pointer',
             width: '100%',
           }}>
           {categoryOptions.map(c => <option key={c}>{c}</option>)}
         </select>
       </div>
 
-      <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '20px' }}>
-        <div style={{ fontSize: '12px', color: '#999', marginBottom: '14px' }}>
+      <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px' }}>
+        <div style={{ fontSize: '12px', color: 'var(--text-light)', marginBottom: '14px' }}>
           {filtered.length} movimiento{filtered.length !== 1 ? 's' : ''}
         </div>
 
         {filtered.length === 0 && (
-          <p style={{ color: '#aaa', fontSize: '13px' }}>No hay movimientos con estos filtros.</p>
+          <p style={{ color: 'var(--text-light)', fontSize: '13px' }}>No hay movimientos con estos filtros.</p>
         )}
 
         {filtered.map(t => (
           <div key={t.id} style={{
             display: 'flex', alignItems: 'center', gap: '12px',
-            padding: '10px 0', borderBottom: '1px solid #f5f5f5',
+            padding: '10px 0', borderBottom: '1px solid var(--border-dim)',
           }}>
 
             {/* Indicador tipo */}
@@ -110,10 +110,10 @@ function Movements() {
 
             {/* Info */}
             <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontSize: '13px', fontWeight: '500', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {t.description}
               </div>
-              <div style={{ fontSize: '11px', color: '#aaa', marginTop: '2px' }}>
+              <div style={{ fontSize: '11px', color: 'var(--text-light)', marginTop: '2px' }}>
                 {t.category} · {t.wallet} · {t.date}
               </div>
             </div>
@@ -131,11 +131,11 @@ function Movements() {
               onClick={() => handleDelete(t.id)}
               style={{
                 background: 'none', border: 'none', cursor: 'pointer',
-                color: '#ccc', padding: '4px', borderRadius: '6px',
+                color: 'var(--text-lighter)', padding: '4px', borderRadius: '6px',
                 display: 'flex', alignItems: 'center', flexShrink: 0,
               }}
               onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}
-              onMouseLeave={e => e.currentTarget.style.color = '#ccc'}
+              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-lighter)'}
             >
               <Trash2 size={15} />
             </button>

@@ -107,16 +107,16 @@ function Wallets({ session }) {
 
   const inputStyle = {
     width: '100%', padding: '9px 12px', fontSize: '14px',
-    border: '1px solid #eee', borderRadius: '8px',
-    background: '#fff', color: '#333',
+    border: '1px solid var(--border-light)', borderRadius: '8px',
+    background: 'var(--bg-input)', color: 'var(--text-main)',
   }
 
-  if (loading) return <p style={{ color: '#888', padding: '20px' }}>Cargando billeteras...</p>
+  if (loading) return <p style={{ color: 'var(--text-muted)', padding: '20px' }}>Cargando billeteras...</p>
 
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-        <h2 style={{ color: '#333', fontWeight: '600' }}>Billeteras</h2>
+        <h2 style={{ color: 'var(--text-main)', fontWeight: '600' }}>Billeteras</h2>
         <button
           onClick={() => setShowForm(!showForm)}
           style={{
@@ -131,25 +131,25 @@ function Wallets({ session }) {
 
       {/* Formulario nueva billetera */}
       {showForm && (
-        <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '20px', marginBottom: '16px' }}>
-          <h3 style={{ fontSize: '14px', fontWeight: '600', color: '#333', marginBottom: '14px' }}>Nueva billetera</h3>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px', marginBottom: '16px' }}>
+          <h3 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '14px' }}>Nueva billetera</h3>
           <div style={{ marginBottom: '12px' }}>
-            <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Nombre</label>
+            <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Nombre</label>
             <input style={inputStyle} placeholder="Ej: Daviplata, Ahorro..." value={newName} onChange={e => setNewName(e.target.value)} />
           </div>
           <div style={{ marginBottom: '16px' }}>
-            <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '8px' }}>Color</label>
+            <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>Color</label>
             <div style={{ display: 'flex', gap: '8px' }}>
               {colorOptions.map(c => (
                 <div key={c.color} onClick={() => setNewColor(c)} style={{
                   width: '28px', height: '28px', borderRadius: '50%', background: c.color, cursor: 'pointer',
-                  border: newColor.color === c.color ? '3px solid #333' : '3px solid transparent',
+                  border: newColor.color === c.color ? '3px solid var(--text-main)' : '3px solid transparent',
                 }} />
               ))}
             </div>
           </div>
           <div style={{ display: 'flex', gap: '8px' }}>
-            <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid #eee', background: 'transparent', fontSize: '13px', color: '#888', cursor: 'pointer' }}>
+            <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
               Cancelar
             </button>
             <button onClick={handleAddWallet} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
@@ -175,7 +175,7 @@ function Wallets({ session }) {
           const isExpandedExpense = expanded?.wallet === w.name && expanded?.type === 'expense'
 
           return (
-            <div key={w.name} style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', overflow: 'hidden' }}>
+            <div key={w.name} style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', overflow: 'hidden' }}>
               <div style={{ padding: '20px' }}>
 
                 {/* Header */}
@@ -183,13 +183,13 @@ function Wallets({ session }) {
                   <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: w.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Wallet size={18} color={w.color} />
                   </div>
-                  <span style={{ fontWeight: '600', fontSize: '15px', color: '#333' }}>{w.name}</span>
+                  <span style={{ fontWeight: '600', fontSize: '15px', color: 'var(--text-main)' }}>{w.name}</span>
                 </div>
 
                 {/* Saldo */}
                 <div style={{ marginBottom: '16px' }}>
-                  <div style={{ fontSize: '11px', color: '#999', marginBottom: '4px', textTransform: 'uppercase' }}>Saldo</div>
-                  <div style={{ fontSize: '22px', fontWeight: '700', color: w.balance >= 0 ? '#333' : '#D85A30' }}>
+                  <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Saldo</div>
+                  <div style={{ fontSize: '22px', fontWeight: '700', color: w.balance >= 0 ? 'var(--text-main)' : '#D85A30' }}>
                     {formatCOP(w.balance)}
                   </div>
                 </div>
@@ -234,7 +234,7 @@ function Wallets({ session }) {
 
               {/* Lista desplegable */}
               {(isExpandedIncome || isExpandedExpense) && (
-                <div style={{ borderTop: '1px solid #f5f5f5' }}>
+                <div style={{ borderTop: '1px solid var(--border-dim)' }}>
                   <div style={{
                     padding: '10px 20px 6px',
                     display: 'flex', justifyContent: 'space-between', alignItems: 'center'
@@ -242,7 +242,7 @@ function Wallets({ session }) {
                     <span style={{ fontSize: '12px', fontWeight: '500', color: isExpandedIncome ? '#1D9E75' : '#D85A30' }}>
                       {isExpandedIncome ? 'Ingresos' : 'Gastos'} en {w.name}
                     </span>
-                    <button onClick={() => setExpanded(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc' }}>
+                    <button onClick={() => setExpanded(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)' }}>
                       <X size={14} />
                     </button>
                   </div>
@@ -251,13 +251,13 @@ function Wallets({ session }) {
                     {(isExpandedIncome ? incomeMovs : expenseMovs).map(t => (
                       <div key={t.id} style={{
                         display: 'flex', alignItems: 'center', gap: '10px',
-                        padding: '9px 0', borderBottom: '1px solid #f5f5f5',
+                        padding: '9px 0', borderBottom: '1px solid var(--border-dim)',
                       }}>
                         <div style={{ flex: 1, minWidth: 0 }}>
-                          <div style={{ fontSize: '13px', fontWeight: '500', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                          <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                             {t.description}
                           </div>
-                          <div style={{ fontSize: '11px', color: '#aaa', marginTop: '1px' }}>
+                          <div style={{ fontSize: '11px', color: 'var(--text-light)', marginTop: '1px' }}>
                             {t.category} · {t.date}
                           </div>
                         </div>
@@ -269,9 +269,9 @@ function Wallets({ session }) {
                         </div>
                         <button
                           onClick={() => handleDeleteTx(t.id)}
-                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: '#ccc', padding: '4px', flexShrink: 0 }}
+                          style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '4px', flexShrink: 0 }}
                           onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}
-                          onMouseLeave={e => e.currentTarget.style.color = '#ccc'}
+                          onMouseLeave={e => e.currentTarget.style.color = 'var(--text-lighter)'}
                         >
                           <Trash2 size={13} />
                         </button>

@@ -61,11 +61,11 @@ function Dashboard({ session }) {
   const currentMonth = new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric' })
   const currentMonthLabel = currentMonth.charAt(0).toUpperCase() + currentMonth.slice(1)
 
-  if (loading) return <p style={{ color: '#888', padding: '20px' }}>Cargando movimientos...</p>
+  if (loading) return <p style={{ color: 'var(--text-muted)', padding: '20px' }}>Cargando movimientos...</p>
 
   return (
     <div>
-      <h2 style={{ marginBottom: '20px', color: '#333', fontWeight: '600' }}>
+      <h2 style={{ marginBottom: '20px', color: 'var(--text-main)', fontWeight: '600' }}>
         Resumen — {currentMonthLabel}
       </h2>
 
@@ -75,7 +75,7 @@ function Dashboard({ session }) {
         gap: '14px',
         marginBottom: '24px'
       }}>
-        <MetricCard label="Saldo total" value={formatCOP(totalBalance)} sub="Todas las cuentas" color="#333" />
+        <MetricCard label="Saldo total" value={formatCOP(totalBalance)} sub="Todas las cuentas" color="var(--text-main)" />
         <MetricCard label="Ingresos"    value={formatCOP(totalIncome)}   sub="Este mes"         color="#1D9E75" />
         <MetricCard label="Gastos"      value={formatCOP(totalExpense)}  sub="Este mes"         color="#D85A30" />
       </div>
@@ -83,17 +83,17 @@ function Dashboard({ session }) {
       <TransactionForm onAdd={handleAdd} />
       <TransferForm session={session} onTransfer={handleTransfer} />
 
-      <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '20px' }}>
-        <h3 style={{ marginBottom: '16px', fontSize: '14px', color: '#333' }}>Últimos movimientos</h3>
+      <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px' }}>
+        <h3 style={{ marginBottom: '16px', fontSize: '14px', color: 'var(--text-main)' }}>Últimos movimientos</h3>
 
         {transactions.length === 0 && (
-          <p style={{ color: '#aaa', fontSize: '13px' }}>Aún no hay movimientos. ¡Registra el primero!</p>
+          <p style={{ color: 'var(--text-light)', fontSize: '13px' }}>Aún no hay movimientos. ¡Registra el primero!</p>
         )}
 
         {transactions.map(t => (
           <div key={t.id} style={{
             display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-            padding: '10px 0', borderBottom: '1px solid #f5f5f5'
+            padding: '10px 0', borderBottom: '1px solid var(--border-dim)'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
               {t.type === 'transfer'
@@ -104,8 +104,8 @@ function Dashboard({ session }) {
                   }} />
               }
               <div style={{ minWidth: 0 }}>
-                <div style={{ fontSize: '13px', fontWeight: '500', color: '#333', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.description}</div>
-                <div style={{ fontSize: '11px', color: '#aaa', marginTop: '2px' }}>{t.category} · {t.wallet} · {t.date}</div>
+                <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{t.description}</div>
+                <div style={{ fontSize: '11px', color: 'var(--text-light)', marginTop: '2px' }}>{t.category} · {t.wallet} · {t.date}</div>
               </div>
             </div>
             <div style={{

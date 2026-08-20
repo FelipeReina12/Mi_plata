@@ -80,21 +80,21 @@ function TransferForm({ session, onTransfer }) {
 
   const inputStyle = {
     width: '100%', padding: '8px 10px', fontSize: '14px',
-    border: '1px solid #ddd', borderRadius: '8px',
-    background: '#fff', color: '#333',
+    border: '1px solid var(--border-light)', borderRadius: '8px',
+    background: 'var(--bg-input)', color: 'var(--text-main)',
   }
 
   return (
-    <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '20px', marginBottom: '20px' }}>
+    <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px', marginBottom: '20px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
         <ArrowRightLeft size={16} color="#7F77DD" />
-        <h3 style={{ fontSize: '14px', color: '#333', fontWeight: '600' }}>Transferencia entre billeteras</h3>
+        <h3 style={{ fontSize: '14px', color: 'var(--text-main)', fontWeight: '600' }}>Transferencia entre billeteras</h3>
       </div>
 
       {/* Origen y destino */}
       <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '8px', alignItems: 'center', marginBottom: '12px' }}>
         <div>
-          <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Desde</label>
+          <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Desde</label>
           <select style={inputStyle} value={from} onChange={e => setFrom(e.target.value)}>
             {walletNames.map(w => <option key={w}>{w}</option>)}
           </select>
@@ -103,7 +103,7 @@ function TransferForm({ session, onTransfer }) {
           <ArrowRightLeft size={18} />
         </div>
         <div>
-          <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Hacia</label>
+          <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Hacia</label>
           <select style={inputStyle} value={to} onChange={e => setTo(e.target.value)}>
             {walletNames.map(w => <option key={w}>{w}</option>)}
           </select>
@@ -112,7 +112,7 @@ function TransferForm({ session, onTransfer }) {
 
       {/* Monto */}
       <div style={{ marginBottom: '12px' }}>
-        <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Monto ($)</label>
+        <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Monto ($)</label>
         <input
           style={inputStyle}
           type="number"
@@ -124,7 +124,7 @@ function TransferForm({ session, onTransfer }) {
 
       {/* Descripción */}
       <div style={{ marginBottom: '14px' }}>
-        <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Descripción (opcional)</label>
+        <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Descripción (opcional)</label>
         <input
           style={inputStyle}
           type="text"

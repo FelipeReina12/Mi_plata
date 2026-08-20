@@ -14,8 +14,8 @@ function Sidebar({ page, setPage }) {
   return (
     <aside style={{
       width: '200px',
-      background: '#fff',
-      borderRight: '1px solid #eee',
+      background: 'var(--bg-card)',
+      borderRight: '1px solid var(--border-light)',
       display: 'flex',
       flexDirection: 'column',
       padding: '20px 0',
@@ -24,10 +24,10 @@ function Sidebar({ page, setPage }) {
 
       {/* Logo */}
       <div style={{ padding: '0 18px 24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <div style={{ background: '#EEEDFE', borderRadius: '8px', padding: '6px' }}>
+        <div style={{ background: page === 'settings' ? 'rgba(127, 119, 221, 0.2)' : '#EEEDFE', borderRadius: '8px', padding: '6px' }}>
           <Wallet size={18} color="#7F77DD" />
         </div>
-        <span style={{ fontWeight: '600', fontSize: '16px' }}>MiPlata</span>
+        <span style={{ fontWeight: '600', fontSize: '16px', color: 'var(--text-main)' }}>MiPlata</span>
       </div>
 
       {/* Nav items */}
@@ -39,8 +39,8 @@ function Sidebar({ page, setPage }) {
           padding: '10px 18px',
           cursor: 'pointer',
           borderLeft: page === item.id ? '2px solid #7F77DD' : '2px solid transparent',
-          background:  page === item.id ? '#EEEDFE' : 'transparent',
-          color:       page === item.id ? '#3C3489' : '#666',
+          background:  page === item.id ? 'rgba(127, 119, 221, 0.15)' : 'transparent',
+          color:       page === item.id ? '#7F77DD' : 'var(--text-muted)',
           fontSize: '13px',
           fontWeight:  page === item.id ? '500' : '400',
         }}>
@@ -55,8 +55,8 @@ function Sidebar({ page, setPage }) {
           onClick={() => supabase.auth.signOut()}
           style={{
             width: '100%', padding: '9px', borderRadius: '8px',
-            border: '1px solid #eee', background: 'transparent',
-            fontSize: '13px', color: '#999', cursor: 'pointer',
+            border: '1px solid var(--border-light)', background: 'transparent',
+            fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer',
             display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px',
           }}>
           <LogOut size={14} />

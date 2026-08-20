@@ -48,20 +48,20 @@ function TransactionForm({ onAdd }) {
   const btnStyle = (active, color) => ({
     flex: 1, padding: '8px', borderRadius: '8px', cursor: 'pointer',
     fontWeight: '500', fontSize: '13px',
-    border: active ? 'none' : '1px solid #ddd',
+    border: active ? 'none' : '1px solid var(--border-light)',
     background: active ? color : 'transparent',
-    color: active ? '#fff' : '#888',
+    color: active ? '#fff' : 'var(--text-muted)',
   })
 
   const inputStyle = {
     width: '100%', padding: '8px 10px', fontSize: '14px',
-    border: '1px solid #ddd', borderRadius: '8px',
-    background: '#fff', color: '#333',
+    border: '1px solid var(--border-light)', borderRadius: '8px',
+    background: 'var(--bg-input)', color: 'var(--text-main)',
   }
 
   return (
-    <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '20px', marginBottom: '20px' }}>
-      <h3 style={{ marginBottom: '16px', fontSize: '14px', color: '#333' }}>Registrar movimiento</h3>
+    <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px', marginBottom: '20px' }}>
+      <h3 style={{ marginBottom: '16px', fontSize: '14px', color: 'var(--text-main)' }}>Registrar movimiento</h3>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
         <button style={btnStyle(type === 'income',  '#1D9E75')} onClick={() => setType('income')}>
@@ -73,7 +73,7 @@ function TransactionForm({ onAdd }) {
       </div>
 
       <div style={{ marginBottom: '10px' }}>
-        <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Descripción</label>
+        <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Descripción</label>
         <input
           style={inputStyle}
           placeholder="Ej: Mercado, Salario, Netflix..."
@@ -83,7 +83,7 @@ function TransactionForm({ onAdd }) {
       </div>
 
       <div style={{ marginBottom: '10px' }}>
-        <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Monto ($)</label>
+        <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Monto ($)</label>
         <input
           style={inputStyle}
           type="number"
@@ -95,13 +95,13 @@ function TransactionForm({ onAdd }) {
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
         <div>
-          <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Categoría</label>
+          <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Categoría</label>
           <select style={inputStyle} value={category} onChange={e => setCategory(e.target.value)}>
             {categoryOptions.map(c => <option key={c}>{c}</option>)}
           </select>
         </div>
         <div>
-          <label style={{ fontSize: '12px', color: '#888', display: 'block', marginBottom: '4px' }}>Billetera</label>
+          <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Billetera</label>
           <select style={inputStyle} value={wallet} onChange={e => setWallet(e.target.value)}>
             {walletNames.map(w => <option key={w}>{w}</option>)}
           </select>

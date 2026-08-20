@@ -18,7 +18,7 @@ function MainLayout({ children, page, setPage }) {
         flex: 1,
         padding: isMobile ? '16px' : '24px',
         paddingBottom: isMobile ? '80px' : '24px',
-        background: '#F7F6F3',
+        background: 'var(--bg-app)',
         minHeight: '100vh',
       }}>
         {children}

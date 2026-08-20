@@ -47,7 +47,7 @@ function Reports() {
 
   return (
     <div>
-      <h2 style={{ marginBottom: '20px', color: '#333', fontWeight: '600' }}>Reportes</h2>
+      <h2 style={{ marginBottom: '20px', color: 'var(--text-main)', fontWeight: '600' }}>Reportes</h2>
 
       <div style={{
         display: 'grid',
@@ -56,11 +56,11 @@ function Reports() {
       }}>
         {[
           { label: 'Saldo neto',     value: formatCOP(totalIncome - totalExpense), color: '#1D9E75' },
-          { label: 'Total ingresos', value: formatCOP(totalIncome),                color: '#333'    },
+          { label: 'Total ingresos', value: formatCOP(totalIncome),                color: 'var(--text-main)' },
           { label: 'Total gastos',   value: formatCOP(totalExpense),               color: '#D85A30' },
         ].map(c => (
-          <div key={c.label} style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '16px 20px' }}>
-            <div style={{ fontSize: '11px', color: '#999', textTransform: 'uppercase', marginBottom: '6px' }}>{c.label}</div>
+          <div key={c.label} style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '16px 20px' }}>
+            <div style={{ fontSize: '11px', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '6px' }}>{c.label}</div>
             <div style={{ fontSize: '20px', fontWeight: '600', color: c.color }}>{c.value}</div>
           </div>
         ))}
@@ -71,10 +71,10 @@ function Reports() {
         gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr',
         gap: '14px'
       }}>
-        <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '20px' }}>
-          <h3 style={{ fontSize: '14px', color: '#333', marginBottom: '16px' }}>Gastos por categoría</h3>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px' }}>
+          <h3 style={{ fontSize: '14px', color: 'var(--text-main)', marginBottom: '16px' }}>Gastos por categoría</h3>
           {pieData.length === 0
-            ? <p style={{ color: '#aaa', fontSize: '13px' }}>Aún no hay gastos registrados</p>
+            ? <p style={{ color: 'var(--text-light)', fontSize: '13px' }}>Aún no hay gastos registrados</p>
             : <ResponsiveContainer width="100%" height={220}>
                 <PieChart>
                   <Pie data={pieData} cx="50%" cy="50%" innerRadius={55} outerRadius={85} dataKey="value">
@@ -87,10 +87,10 @@ function Reports() {
           }
         </div>
 
-        <div style={{ background: '#fff', borderRadius: '12px', border: '1px solid #eee', padding: '20px' }}>
-          <h3 style={{ fontSize: '14px', color: '#333', marginBottom: '16px' }}>Ingresos vs Gastos por mes</h3>
+        <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px' }}>
+          <h3 style={{ fontSize: '14px', color: 'var(--text-main)', marginBottom: '16px' }}>Ingresos vs Gastos por mes</h3>
           {barData.length === 0
-            ? <p style={{ color: '#aaa', fontSize: '13px' }}>Aún no hay datos suficientes</p>
+            ? <p style={{ color: 'var(--text-light)', fontSize: '13px' }}>Aún no hay datos suficientes</p>
             : <ResponsiveContainer width="100%" height={220}>
                 <BarChart data={barData}>
                   <XAxis dataKey="month" tick={{ fontSize: 11 }} />
