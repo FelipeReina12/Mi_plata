@@ -112,7 +112,7 @@ function Dashboard({ session }) {
               fontSize: '13px', fontWeight: '600', flexShrink: 0, marginLeft: '10px',
               color: t.type === 'transfer' ? '#7F77DD' : t.type === 'income' ? '#1D9E75' : '#D85A30',
             }}>
-              {t.type === 'transfer' ? '↔' : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
+              {t.type === 'transfer' ? (t.description.includes('→') ? '-' : '+') : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
             </div>
           </div>
         ))}

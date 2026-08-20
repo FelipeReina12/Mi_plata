@@ -7,8 +7,8 @@ function formatCOP(num) {
 }
 
 const defaultWallets = [
-  { name: 'Efectivo',        color: '#888780', bg: '#F1EFE8' },
-  { name: 'Nequi',           color: '#1D9E75', bg: '#E1F5EE' },
+  { name: 'Efectivo', color: '#888780', bg: '#F1EFE8' },
+  { name: 'Nequi', color: '#1D9E75', bg: '#E1F5EE' },
   { name: 'Banco Falabella', color: '#185FA5', bg: '#E6F1FB' },
 ]
 
@@ -23,15 +23,15 @@ const colorOptions = [
 
 function Wallets({ session }) {
   const [transactions, setTransactions] = useState([])
-  const [wallets,      setWallets]      = useState([])
-  const [loading,      setLoading]      = useState(true)
-  const [showForm,     setShowForm]     = useState(false)
-  const [newName,      setNewName]      = useState('')
-  const [newColor,     setNewColor]     = useState(colorOptions[0])
-  const [saving,       setSaving]       = useState(false)
-  const [isMobile,     setIsMobile]     = useState(window.innerWidth < 768)
+  const [wallets, setWallets] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [showForm, setShowForm] = useState(false)
+  const [newName, setNewName] = useState('')
+  const [newColor, setNewColor] = useState(colorOptions[0])
+  const [saving, setSaving] = useState(false)
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
   // expanded: { wallet: 'Nequi', type: 'income' } o null
-  const [expanded,     setExpanded]     = useState(null)
+  const [expanded, setExpanded] = useState(null)
 
   useEffect(() => {
     loadAll()
@@ -89,7 +89,7 @@ function Wallets({ session }) {
 
   const walletSummary = transactions.reduce((acc, t) => {
     if (!acc[t.wallet]) acc[t.wallet] = { income: 0, expense: 0, movements: [] }
-    if (t.type === 'income')  acc[t.wallet].income  += t.amount
+    if (t.type === 'income') acc[t.wallet].income += t.amount
     if (t.type === 'expense') acc[t.wallet].expense += t.amount
     acc[t.wallet].movements.push(t)
     return acc
@@ -97,9 +97,9 @@ function Wallets({ session }) {
 
   const walletsWithBalance = wallets.map(w => ({
     ...w,
-    income:    walletSummary[w.name]?.income    || 0,
-    expense:   walletSummary[w.name]?.expense   || 0,
-    balance:   (walletSummary[w.name]?.income   || 0) - (walletSummary[w.name]?.expense || 0),
+    income: walletSummary[w.name]?.income || 0,
+    expense: walletSummary[w.name]?.expense || 0,
+    balance: (walletSummary[w.name]?.income || 0) - (walletSummary[w.name]?.expense || 0),
     movements: walletSummary[w.name]?.movements || [],
   }))
 
@@ -169,9 +169,9 @@ function Wallets({ session }) {
       {/* Tarjetas */}
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '14px' }}>
         {walletsWithBalance.map(w => {
-          const incomeMovs  = w.movements.filter(t => t.type === 'income')
+          const incomeMovs = w.movements.filter(t => t.type === 'income')
           const expenseMovs = w.movements.filter(t => t.type === 'expense')
-          const isExpandedIncome  = expanded?.wallet === w.name && expanded?.type === 'income'
+          const isExpandedIncome = expanded?.wallet === w.name && expanded?.type === 'income'
           const isExpandedExpense = expanded?.wallet === w.name && expanded?.type === 'expense'
 
           return (
