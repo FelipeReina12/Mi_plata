@@ -8,10 +8,11 @@ function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
 }
 
-function Dashboard({ session }) {
-  const [transactions, setTransactions] = useState([])
-  const [loading,      setLoading]      = useState(true)
-  const [isMobile,     setIsMobile]     = useState(window.innerWidth < 768)
+function Dashboard({ session, setPage }) {
+  const [transactions,  setTransactions]  = useState([])
+  const [subscriptions, setSubscriptions] = useState([])
+  const [loading,       setLoading]       = useState(true)
+  const [isMobile,      setIsMobile]      = useState(window.innerWidth < 768)
 
   useEffect(() => {
     fetchTransactions()
@@ -22,15 +23,27 @@ function Dashboard({ session }) {
 
   async function fetchTransactions() {
     setLoading(true)
-    const { data, error } = await supabase
-      .from('transactions')
-      .select('*')
-      .order('created_at', { ascending: false })
+    const [{ data: txData }, { data: subData }] = await Promise.all([
+      supabase.from('transactions').select('*').order('created_at', { ascending: false }).limit(20),
+      supabase.from('subscriptions').select('*').order('next_date', { ascending: true })
+    ])
 
-    if (error) {
-      console.error('Error cargando:', error)
-    } else {
-      setTransactions(data)
+    if (txData) setTransactions(txData)
+    if (subData) {
+      // Filtrar suscripciones urgentes (próximos 7 días)
+      const today = new Date()
+      today.setHours(0, 0, 0, 0)
+      
+      const upcoming = subData.filter(s => {
+        let nextDate = new Date(s.next_date + 'T00:00:00')
+        nextDate.setHours(0, 0, 0, 0)
+        if (nextDate < today) {
+          while(nextDate < today) nextDate.setMonth(nextDate.getMonth() + 1)
+        }
+        const diffDays = Math.ceil(Math.abs(nextDate - today) / (1000 * 60 * 60 * 24))
+        return diffDays <= 7
+      })
+      setSubscriptions(upcoming)
     }
     setLoading(false)
   }
@@ -82,6 +95,30 @@ function Dashboard({ session }) {
 
       <TransactionForm onAdd={handleAdd} />
       <TransferForm session={session} onTransfer={handleTransfer} />
+
+      {/* Widget Próximos Pagos */}
+      {subscriptions.length > 0 && (
+        <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h3 style={{ fontSize: '14px', color: 'var(--text-main)', fontWeight: '600' }}>Próximos pagos fijos (7 días)</h3>
+            <button onClick={() => setPage && setPage('subscriptions')} style={{ background: 'none', border: 'none', color: '#7F77DD', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+              Ver todas
+            </button>
+          </div>
+          
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+            {subscriptions.map(s => (
+              <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-input)', padding: '10px 14px', borderRadius: '8px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#D85A30' }} />
+                  <span style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)' }}>{s.name}</span>
+                </div>
+                <span style={{ fontSize: '13px', fontWeight: '600', color: '#D85A30' }}>-{formatCOP(s.amount)}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px' }}>
         <h3 style={{ marginBottom: '16px', fontSize: '14px', color: 'var(--text-main)' }}>Últimos movimientos</h3>

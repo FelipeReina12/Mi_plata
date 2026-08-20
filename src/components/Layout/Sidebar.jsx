@@ -1,4 +1,4 @@
-import { LayoutDashboard, List, Wallet, BarChart2, Target, Settings, LogOut } from 'lucide-react'
+import { LayoutDashboard, List, Wallet, BarChart2, Target, Settings, LogOut, Repeat } from 'lucide-react'
 import { supabase } from '../../supabaseClient'
 
 const navItems = [
@@ -7,6 +7,7 @@ const navItems = [
   { icon: Wallet,          label: 'Billeteras',   id: 'wallets'   },
   { icon: BarChart2,       label: 'Reportes',     id: 'reports'   },
   { icon: Target,          label: 'Presupuestos', id: 'budgets'   },
+  { icon: Repeat,          label: 'Gastos fijos', id: 'subscriptions' },
   { icon: Settings,        label: 'Ajustes',      id: 'settings'  },
 ]
 

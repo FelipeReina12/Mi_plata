@@ -7,6 +7,7 @@ import Login from './components/Auth/Login'
 import Movements from './components/Transactions/Movements'
 import Wallets from './components/Wallets/Wallets'
 import Budgets from './components/Budgets/Budgets'
+import Subscriptions from './components/Subscriptions/Subscriptions'
 import Settings from './components/Settings/Settings'
 import ResetPassword from './components/Auth/ResetPassword'
 
@@ -52,11 +53,12 @@ function App() {
 
   return (
     <MainLayout page={page} setPage={setPage} session={session} darkMode={darkMode} setDarkMode={setDarkMode}>
-      {page === 'dashboard' && <Dashboard session={session} />}
+      {page === 'dashboard' && <Dashboard session={session} setPage={setPage} />}
       {page === 'reports'   && <Reports />}
       {page === 'movements' && <Movements />}
       {page === 'wallets'   && <Wallets session={session} />}
       {page === 'budgets'   && <Budgets session={session} />}
+      {page === 'subscriptions' && <Subscriptions session={session} />}
       {page === 'settings'  && <Settings darkMode={darkMode} setDarkMode={setDarkMode} />}
     </MainLayout>
   )
