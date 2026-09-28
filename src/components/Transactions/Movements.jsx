@@ -216,9 +216,9 @@ function Movements() {
               <Trash2 size={15} />
             </button>
 
-            {/* Saldo de la billetera antes → después (en celular ocupa también el ancho del monto) */}
+            {/* Saldo de la billetera y total antes → después (en celular ocupa también el ancho del monto) */}
             <div style={{ gridColumn: isMobile ? '2 / 4' : '2 / 3' }}>
-              <BalanceLine balance={balances[t.id]} />
+              <BalanceLine balance={balances[t.id]} label={t.wallet} showTotal />
             </div>
           </div>
         ))}

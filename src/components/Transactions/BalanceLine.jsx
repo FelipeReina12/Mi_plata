@@ -2,16 +2,31 @@ function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
 }
 
-// Saldo de la billetera antes → después del movimiento, como en un extracto bancario
-function BalanceLine({ balance }) {
+// Saldo antes → después del movimiento, como en un extracto bancario.
+// label: nombre de la billetera (por defecto "Saldo").
+// showTotal: agrega una segunda línea con el saldo total de todas las billeteras.
+function BalanceLine({ balance, label = 'Saldo', showTotal = false }) {
   if (!balance) return null
+
+  const strong = value => (
+    <span style={{ fontWeight: '600', color: value < 0 ? '#D85A30' : 'var(--text-muted)' }}>
+      {formatCOP(value)}
+    </span>
+  )
 
   return (
     <div style={{ fontSize: '11px', color: 'var(--text-light)' }}>
-      Saldo: {formatCOP(balance.before)} →{' '}
-      <span style={{ fontWeight: '600', color: balance.after < 0 ? '#D85A30' : 'var(--text-muted)' }}>
-        {formatCOP(balance.after)}
-      </span>
+      <div>
+        {label}: {formatCOP(balance.before)} → {strong(balance.after)}
+      </div>
+      {showTotal && (
+        <div>
+          {balance.totalBefore === balance.totalAfter
+            // Las transferencias solo mueven plata entre billeteras: el total no cambia
+            ? <>Total: {strong(balance.totalAfter)} (sin cambio)</>
+            : <>Total: {formatCOP(balance.totalBefore)} → {strong(balance.totalAfter)}</>}
+        </div>
+      )}
     </div>
   )
 }
