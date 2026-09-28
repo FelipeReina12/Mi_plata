@@ -15,6 +15,7 @@ function TransferForm({ session, onTransfer }) {
   const [description,  setDescription]  = useState('Transferencia')
   const [saving,       setSaving]       = useState(false)
   const [error,        setError]        = useState('')
+  const [date,         setDate]         = useState(todayLocal())
   const isMobile = useIsMobile()
 
   useEffect(() => {
@@ -38,9 +39,9 @@ function TransferForm({ session, onTransfer }) {
     setError('')
     if (!amount || parseInt(amount) <= 0) return setError('Ingresa un monto válido')
     if (from === to) return setError('Las billeteras deben ser diferentes')
+    if (!date) return setError('Elige la fecha')
 
     setSaving(true)
-    const date = todayLocal()
     const desc = description.trim() || 'Transferencia'
 
     const { data, error } = await supabase
@@ -79,6 +80,7 @@ function TransferForm({ session, onTransfer }) {
     onTransfer(data)
     setAmount('')
     setDescription('Transferencia')
+    setDate(todayLocal())
     setSaving(false)
   }
 
@@ -114,16 +116,28 @@ function TransferForm({ session, onTransfer }) {
         </div>
       </div>
 
-      {/* Monto */}
-      <div style={{ marginBottom: '12px' }}>
-        <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Monto ($)</label>
-        <input
-          style={inputStyle}
-          type="number"
-          placeholder="0"
-          value={amount}
-          onChange={e => setAmount(e.target.value)}
-        />
+      {/* Monto y fecha */}
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+        <div>
+          <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Monto ($)</label>
+          <input
+            style={inputStyle}
+            type="number"
+            placeholder="0"
+            value={amount}
+            onChange={e => setAmount(e.target.value)}
+          />
+        </div>
+        <div>
+          <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Fecha</label>
+          <input
+            style={inputStyle}
+            type="date"
+            max={todayLocal()}
+            value={date}
+            onChange={e => setDate(e.target.value)}
+          />
+        </div>
       </div>
 
       {/* Descripción */}

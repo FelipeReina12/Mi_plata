@@ -3,10 +3,7 @@ import { supabase } from '../../supabaseClient'
 import useIsMobile from '../../hooks/useIsMobile'
 import { defaultWallets, mergeWithDefaults } from '../../data/defaultWallets'
 import { todayLocal } from '../../utils/dates'
-
-const categoryOptions = [
-  'Comida', 'Transporte', 'Servicios', 'Entretenimiento', 'Salario', 'Otros ingresos', 'Otros'
-]
+import { transactionCategories as categoryOptions } from '../../data/categories'
 
 const defaultWalletNames = defaultWallets.map(w => w.name)
 
@@ -17,6 +14,7 @@ function TransactionForm({ onAdd }) {
   const [category,    setCategory]    = useState('Comida')
   const [wallet,      setWallet]      = useState(defaultWalletNames[0])
   const [walletNames, setWalletNames] = useState(defaultWalletNames)
+  const [date,        setDate]        = useState(todayLocal())
   const isMobile = useIsMobile()
 
   useEffect(() => {
@@ -34,6 +32,7 @@ function TransactionForm({ onAdd }) {
 
   function handleSubmit() {
     if (!description || !amount) return alert('Completa descripción y monto')
+    if (!date) return alert('Elige la fecha')
 
     const newTransaction = {
       description,
@@ -41,12 +40,13 @@ function TransactionForm({ onAdd }) {
       type,
       category,
       wallet,
-      date:     todayLocal(),
+      date,
     }
 
     onAdd(newTransaction)
     setDescription('')
     setAmount('')
+    setDate(todayLocal())
   }
 
   const btnStyle = (active, color) => ({
@@ -86,15 +86,27 @@ function TransactionForm({ onAdd }) {
         />
       </div>
 
-      <div style={{ marginBottom: '10px' }}>
-        <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Monto ($)</label>
-        <input
-          style={inputStyle}
-          type="number"
-          placeholder="0"
-          value={amount}
-          onChange={e => setAmount(e.target.value)}
-        />
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '10px', marginBottom: '10px' }}>
+        <div>
+          <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Monto ($)</label>
+          <input
+            style={inputStyle}
+            type="number"
+            placeholder="0"
+            value={amount}
+            onChange={e => setAmount(e.target.value)}
+          />
+        </div>
+        <div>
+          <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Fecha</label>
+          <input
+            style={inputStyle}
+            type="date"
+            max={todayLocal()}
+            value={date}
+            onChange={e => setDate(e.target.value)}
+          />
+        </div>
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '10px', marginBottom: '14px' }}>

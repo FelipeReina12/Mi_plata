@@ -6,6 +6,7 @@ import TransferForm from '../Transactions/TransferForm'
 import BalanceLine from '../Transactions/BalanceLine'
 import { walletBalances, initialBalancesByName } from '../../utils/balances'
 import useIsMobile from '../../hooks/useIsMobile'
+import { byDateDesc } from '../../utils/dates'
 import InitialBalanceSetup from './InitialBalanceSetup'
 import { mergeWithDefaults, replaceSaved } from '../../data/defaultWallets'
 
@@ -304,8 +305,8 @@ function Wallets({ session }) {
       {/* Tarjetas */}
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '14px' }}>
         {walletsWithBalance.map(w => {
-          const incomeMovs = w.movements.filter(t => t.type === 'income' || (t.type === 'transfer' && (t.description.includes('←') || t.description.includes('<-'))))
-          const expenseMovs = w.movements.filter(t => t.type === 'expense' || (t.type === 'transfer' && (t.description.includes('→') || t.description.includes('->'))))
+          const incomeMovs = [...w.movements].sort(byDateDesc).filter(t => t.type === 'income' || (t.type === 'transfer' && (t.description.includes('←') || t.description.includes('<-'))))
+          const expenseMovs = [...w.movements].sort(byDateDesc).filter(t => t.type === 'expense' || (t.type === 'transfer' && (t.description.includes('→') || t.description.includes('->'))))
           const isExpandedIncome = expanded?.wallet === w.name && expanded?.type === 'income'
           const isExpandedExpense = expanded?.wallet === w.name && expanded?.type === 'expense'
 

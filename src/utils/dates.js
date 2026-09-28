@@ -10,3 +10,10 @@ export function todayLocal() {
 export function currentMonthLocal() {
   return todayLocal().slice(0, 7)
 }
+
+// Para ordenar movimientos del más reciente al más antiguo: por fecha y, el mismo día, por hora de registro.
+// Uso: [...transactions].sort(byDateDesc)
+export function byDateDesc(a, b) {
+  return (b.date || '').localeCompare(a.date || '') ||
+         (b.created_at || '').localeCompare(a.created_at || '')
+}

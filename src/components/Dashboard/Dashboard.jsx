@@ -8,7 +8,7 @@ import useIsMobile from '../../hooks/useIsMobile'
 import InitialBalanceSetup from '../Wallets/InitialBalanceSetup'
 import { mergeWithDefaults, replaceSaved } from '../../data/defaultWallets'
 import { balanceDelta } from '../../utils/balances'
-import { currentMonthLocal } from '../../utils/dates'
+import { currentMonthLocal, byDateDesc } from '../../utils/dates'
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
@@ -153,7 +153,7 @@ function Dashboard({ session, setPage }) {
           <p style={{ color: 'var(--text-light)', fontSize: '13px' }}>Aún no hay movimientos. ¡Registra el primero!</p>
         )}
 
-        {transactions.slice(0, 20).map((t, i) => (
+        {[...transactions].sort(byDateDesc).slice(0, 20).map((t, i) => (
           <motion.div
             key={t.id}
             initial={{ opacity: 0, x: -10 }}

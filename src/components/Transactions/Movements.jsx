@@ -5,6 +5,9 @@ import { walletBalances, initialBalancesByName } from '../../utils/balances'
 import BalanceLine from './BalanceLine'
 import useIsMobile from '../../hooks/useIsMobile'
 import { mergeWithDefaults } from '../../data/defaultWallets'
+import { byDateDesc } from '../../utils/dates'
+import EditTransactionModal from './EditTransactionModal'
+import { AnimatePresence } from 'framer-motion'
 
 const categoryOptions = ['Todas', 'Comida', 'Transporte', 'Servicios', 'Entretenimiento', 'Salario', 'Otros ingresos', 'Transferencia', 'Otros']
 
@@ -24,6 +27,7 @@ function Movements() {
   const [filterType,   setFilterType]   = useState('all')
   const [filterCat,    setFilterCat]    = useState('Todas')
   const [search,       setSearch]       = useState('')
+  const [editing,      setEditing]      = useState(null) // movimiento que se está editando
   const isMobile = useIsMobile()
 
   useEffect(() => {
@@ -41,6 +45,11 @@ function Movements() {
     else setTransactions(data)
     if (walletData) setWallets(mergeWithDefaults(walletData)) // sin las eliminadas
     setLoading(false)
+  }
+
+  function handleSaved(updated) {
+    setTransactions(transactions.map(t => t.id === updated.id ? updated : t))
+    setEditing(null)
   }
 
   async function handleDelete(id) {
@@ -63,7 +72,9 @@ function Movements() {
   const query       = normalize(search.trim())
   const queryDigits = /^[\d.,$\s]+$/.test(search.trim()) ? search.replace(/\D/g, '') : ''
 
-  const filtered = transactions
+  // Del más reciente al más antiguo según la fecha del movimiento (puede ser una fecha pasada)
+  const filtered = [...transactions]
+    .sort(byDateDesc)
     .filter(t => filterType === 'all' || t.type === filterType)
     .filter(t => filterCat  === 'Todas' || t.category === filterCat)
     .filter(t => {
@@ -141,6 +152,7 @@ function Movements() {
       <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px' }}>
         <div style={{ fontSize: '12px', color: 'var(--text-light)', marginBottom: '14px' }}>
           {filtered.length} movimiento{filtered.length !== 1 ? 's' : ''}
+          {filtered.length > 0 && ' · toca uno para editarlo'}
         </div>
 
         {filtered.length === 0 && (
@@ -150,11 +162,17 @@ function Movements() {
         )}
 
         {filtered.map(t => (
-          <div key={t.id} style={{
-            display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr) auto auto',
-            alignItems: 'center', columnGap: '12px', rowGap: '3px',
-            padding: '10px 0', borderBottom: '1px solid var(--border-dim)',
-          }}>
+          <div
+            key={t.id}
+            role="button"
+            tabIndex={0}
+            onClick={() => setEditing(t)}
+            onKeyDown={e => { if (e.key === 'Enter') setEditing(t) }}
+            style={{
+              display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr) auto auto',
+              alignItems: 'center', columnGap: '12px', rowGap: '3px',
+              padding: '10px 0', borderBottom: '1px solid var(--border-dim)', cursor: 'pointer',
+            }}>
 
             {/* Indicador tipo */}
             {t.type === 'transfer'
@@ -185,7 +203,7 @@ function Movements() {
 
             {/* Eliminar */}
             <button
-              onClick={() => handleDelete(t.id)}
+              onClick={e => { e.stopPropagation(); handleDelete(t.id) }}
               aria-label="Eliminar"
               style={{
                 background: 'none', border: 'none', cursor: 'pointer',
@@ -205,6 +223,19 @@ function Movements() {
           </div>
         ))}
       </div>
+
+      {/* Editar movimiento */}
+      <AnimatePresence>
+        {editing && (
+          <EditTransactionModal
+            key={editing.id}
+            transaction={editing}
+            walletNames={wallets.map(w => w.name)}
+            onClose={() => setEditing(null)}
+            onSaved={handleSaved}
+          />
+        )}
+      </AnimatePresence>
     </div>
   )
 }
