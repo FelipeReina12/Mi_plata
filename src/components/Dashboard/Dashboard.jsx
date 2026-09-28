@@ -5,6 +5,8 @@ import TransferForm from '../Transactions/TransferForm'
 import { supabase } from '../../supabaseClient'
 import { motion } from 'framer-motion'
 import useIsMobile from '../../hooks/useIsMobile'
+import InitialBalanceSetup from '../Wallets/InitialBalanceSetup'
+import { mergeWithDefaults, replaceSaved } from '../../data/defaultWallets'
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
@@ -14,7 +16,7 @@ function Dashboard({ session, setPage }) {
   const [transactions,  setTransactions]  = useState([])
   const [subscriptions, setSubscriptions] = useState([])
   const [loading,       setLoading]       = useState(true)
-  const [initialTotal,  setInitialTotal]  = useState(0) // suma de los saldos iniciales de las billeteras
+  const [wallets,       setWallets]       = useState([]) // vacío si no cargaron: así no se muestra la pregunta del saldo inicial
   const isMobile = useIsMobile()
 
   useEffect(() => {
@@ -30,7 +32,7 @@ function Dashboard({ session, setPage }) {
     ])
 
     if (txData) setTransactions(txData)
-    if (walletData) setInitialTotal(walletData.reduce((sum, w) => sum + (w.initial_balance || 0), 0))
+    if (walletData) setWallets(mergeWithDefaults(walletData))
     if (subData) {
       // Filtrar suscripciones urgentes (próximos 7 días)
       const today = new Date()
@@ -72,6 +74,7 @@ function Dashboard({ session, setPage }) {
   const thisMonthTxs = transactions.filter(t => t.date && t.date.startsWith(currentMonthKey))
   const totalIncome  = thisMonthTxs.filter(t => t.type === 'income') .reduce((sum, t) => sum + t.amount, 0)
   const totalExpense = thisMonthTxs.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
+  const initialTotal = wallets.reduce((sum, w) => sum + (w.initial_balance || 0), 0) // suma de los saldos iniciales
   const totalBalance = initialTotal + transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0) - transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
 
   // Fecha actual dinámica
@@ -85,6 +88,14 @@ function Dashboard({ session, setPage }) {
       <h2 style={{ marginBottom: '20px', color: 'var(--text-main)', fontWeight: '600' }}>
         Resumen — {currentMonthLabel}
       </h2>
+
+      {/* Pregunta de una sola vez: cuánto hay hoy en cada billetera */}
+      <InitialBalanceSetup
+        session={session}
+        wallets={wallets}
+        transactions={transactions}
+        onSaved={saved => setWallets(ws => replaceSaved(ws, saved))}
+      />
 
       <motion.div
         initial={{ opacity: 0, y: 10 }}
