@@ -14,6 +14,7 @@ function Dashboard({ session, setPage }) {
   const [transactions,  setTransactions]  = useState([])
   const [subscriptions, setSubscriptions] = useState([])
   const [loading,       setLoading]       = useState(true)
+  const [initialTotal,  setInitialTotal]  = useState(0) // suma de los saldos iniciales de las billeteras
   const isMobile = useIsMobile()
 
   useEffect(() => {
@@ -22,12 +23,14 @@ function Dashboard({ session, setPage }) {
 
   async function fetchTransactions() {
     setLoading(true)
-    const [{ data: txData }, { data: subData }] = await Promise.all([
+    const [{ data: txData }, { data: subData }, { data: walletData }] = await Promise.all([
       supabase.from('transactions').select('*').order('created_at', { ascending: false }),
-      supabase.from('subscriptions').select('*').order('next_date', { ascending: true })
+      supabase.from('subscriptions').select('*').order('next_date', { ascending: true }),
+      supabase.from('wallets').select('*'),
     ])
 
     if (txData) setTransactions(txData)
+    if (walletData) setInitialTotal(walletData.reduce((sum, w) => sum + (w.initial_balance || 0), 0))
     if (subData) {
       // Filtrar suscripciones urgentes (próximos 7 días)
       const today = new Date()
@@ -69,7 +72,7 @@ function Dashboard({ session, setPage }) {
   const thisMonthTxs = transactions.filter(t => t.date && t.date.startsWith(currentMonthKey))
   const totalIncome  = thisMonthTxs.filter(t => t.type === 'income') .reduce((sum, t) => sum + t.amount, 0)
   const totalExpense = thisMonthTxs.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
-  const totalBalance = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0) - transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
+  const totalBalance = initialTotal + transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0) - transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
 
   // Fecha actual dinámica
   const currentMonth = new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric' })

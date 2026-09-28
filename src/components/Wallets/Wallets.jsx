@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
-import { Wallet, Plus, ArrowRightLeft, Trash2, X } from 'lucide-react'
+import { Wallet, Plus, ArrowRightLeft, Trash2, X, Pencil } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import TransferForm from '../Transactions/TransferForm'
 import BalanceLine from '../Transactions/BalanceLine'
-import { walletBalances } from '../../utils/balances'
+import { walletBalances, initialBalancesByName } from '../../utils/balances'
 import useIsMobile from '../../hooks/useIsMobile'
 
 function formatCOP(num) {
@@ -34,8 +34,15 @@ function Wallets({ session }) {
   const [showTransfer, setShowTransfer] = useState(false)
   const [newName, setNewName] = useState('')
   const [newColor, setNewColor] = useState(colorOptions[0])
+  const [newInitial, setNewInitial] = useState('')
+  const [formError, setFormError] = useState('')
   const [saving, setSaving] = useState(false)
   const isMobile = useIsMobile()
+  // Edición del saldo inicial: nombre de la billetera que se está editando
+  const [editingInitial, setEditingInitial] = useState(null)
+  const [initialDraft, setInitialDraft] = useState('')
+  const [initialError, setInitialError] = useState('')
+  const [savingInitial, setSavingInitial] = useState(false)
   // expanded: { wallet: 'Nequi', type: 'income' } o null
   const [expanded, setExpanded] = useState(null)
 
@@ -51,9 +58,11 @@ function Wallets({ session }) {
     ])
     if (txData) setTransactions(txData)
     if (walletData) {
-      const userWalletNames = walletData.map(w => w.name)
-      const defaults = defaultWallets.filter(w => !userWalletNames.includes(w.name))
-      setWallets([...defaults, ...walletData])
+      // Las billeteras por defecto van primero; si el usuario ya guardó una (p. ej. con saldo inicial), se usa la guardada
+      const defaultNames = defaultWallets.map(w => w.name)
+      const defaults = defaultWallets.map(d => walletData.find(w => w.name === d.name) || d)
+      const custom = walletData.filter(w => !defaultNames.includes(w.name))
+      setWallets([...defaults, ...custom])
     } else {
       setWallets(defaultWallets)
     }
@@ -63,16 +72,58 @@ function Wallets({ session }) {
   async function handleAddWallet() {
     if (!newName.trim()) return
     setSaving(true)
+    setFormError('')
+    const newWallet = { name: newName.trim(), color: newColor.color, bg: newColor.bg, user_id: session.user.id }
+    // Solo se envía si el usuario lo escribió, así crear billeteras sigue funcionando aunque falte la columna
+    if (newInitial.trim()) newWallet.initial_balance = parseInt(newInitial, 10) || 0
     const { data, error } = await supabase
       .from('wallets')
-      .insert([{ name: newName.trim(), color: newColor.color, bg: newColor.bg, user_id: session.user.id }])
+      .insert([newWallet])
       .select()
-    if (error) { console.error(error); setSaving(false); return }
+    if (error) {
+      console.error(error)
+      setFormError(error.message?.includes('initial_balance')
+        ? 'Falta crear la columna initial_balance en Supabase. Deja el saldo inicial vacío o crea la columna primero.'
+        : 'No se pudo guardar la billetera.')
+      setSaving(false)
+      return
+    }
     setWallets([...wallets, data[0]])
     setNewName('')
+    setNewInitial('')
     setNewColor(colorOptions[0])
     setShowForm(false)
     setSaving(false)
+  }
+
+  function startEditInitial(w) {
+    setEditingInitial(w.name)
+    setInitialDraft(w.initial_balance ? String(w.initial_balance) : '')
+    setInitialError('')
+  }
+
+  async function handleSaveInitial(w) {
+    const value = initialDraft.trim() === '' ? 0 : parseInt(initialDraft, 10)
+    if (Number.isNaN(value)) return setInitialError('Ingresa un número válido')
+
+    setSavingInitial(true)
+    setInitialError('')
+    // Las billeteras por defecto (Efectivo, Nequi...) no existen en la base de datos hasta que se guardan
+    const { data, error } = w.id
+      ? await supabase.from('wallets').update({ initial_balance: value }).eq('id', w.id).select()
+      : await supabase.from('wallets').insert([{ name: w.name, color: w.color, bg: w.bg, initial_balance: value, user_id: session.user.id }]).select()
+    setSavingInitial(false)
+
+    if (error || !data?.length) {
+      console.error(error)
+      if (error?.message?.includes('initial_balance')) setInitialError('Falta crear la columna initial_balance en Supabase.')
+      else if (!error) setInitialError('Supabase no permitió actualizar la billetera. Revisa la política UPDATE de la tabla wallets.')
+      else setInitialError('No se pudo guardar el saldo inicial.')
+      return
+    }
+
+    setWallets(wallets.map(x => x.name === w.name ? data[0] : x))
+    setEditingInitial(null)
   }
 
   async function handleTransfer(newTxs) {
@@ -119,14 +170,14 @@ function Wallets({ session }) {
     ...w,
     income: walletSummary[w.name]?.income || 0,
     expense: walletSummary[w.name]?.expense || 0,
-    balance: (walletSummary[w.name]?.income || 0) - (walletSummary[w.name]?.expense || 0),
+    balance: (w.initial_balance || 0) + (walletSummary[w.name]?.income || 0) - (walletSummary[w.name]?.expense || 0),
     movements: walletSummary[w.name]?.movements || [],
   }))
 
   const totalBalance = walletsWithBalance.reduce((sum, w) => sum + w.balance, 0)
 
   // Saldo de la billetera antes y después de cada movimiento
-  const balances = walletBalances(transactions)
+  const balances = walletBalances(transactions, initialBalancesByName(wallets))
 
   const inputStyle = {
     width: '100%', padding: '9px 12px', fontSize: '14px',
@@ -194,6 +245,10 @@ function Wallets({ session }) {
                 <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Nombre</label>
                 <input style={inputStyle} placeholder="Ej: Daviplata, Ahorro..." value={newName} onChange={e => setNewName(e.target.value)} />
               </div>
+              <div style={{ marginBottom: '12px' }}>
+                <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Saldo inicial (opcional)</label>
+                <input style={inputStyle} type="number" inputMode="numeric" placeholder="¿Cuánto tienes hoy en esta billetera?" value={newInitial} onChange={e => setNewInitial(e.target.value)} />
+              </div>
               <div style={{ marginBottom: '16px' }}>
                 <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>Color</label>
                 <div style={{ display: 'flex', gap: '8px' }}>
@@ -205,6 +260,11 @@ function Wallets({ session }) {
                   ))}
                 </div>
               </div>
+              {formError && (
+                <div style={{ background: '#FAECE7', color: '#712B13', fontSize: '12px', padding: '8px 10px', borderRadius: '8px', marginBottom: '12px' }}>
+                  {formError}
+                </div>
+              )}
               <div style={{ display: 'flex', gap: '8px' }}>
                 <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
                   Cancelar
@@ -251,6 +311,54 @@ function Wallets({ session }) {
                   <div style={{ fontSize: '22px', fontWeight: '700', color: w.balance >= 0 ? 'var(--text-main)' : '#D85A30' }}>
                     {formatCOP(w.balance)}
                   </div>
+
+                  {/* Saldo inicial: lo que había en la billetera antes de empezar a registrar movimientos */}
+                  {editingInitial === w.name ? (
+                    <div style={{ marginTop: '10px' }}>
+                      <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>
+                        Saldo inicial (lo que tenías antes de tu primer movimiento)
+                      </label>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <input
+                          style={{ ...inputStyle, flex: 1, minWidth: 0 }}
+                          type="number"
+                          inputMode="numeric"
+                          placeholder="0"
+                          value={initialDraft}
+                          onChange={e => setInitialDraft(e.target.value)}
+                          autoFocus
+                        />
+                        <button
+                          onClick={() => handleSaveInitial(w)}
+                          disabled={savingInitial}
+                          style={{ padding: '9px 14px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer', flexShrink: 0 }}>
+                          {savingInitial ? '...' : 'Guardar'}
+                        </button>
+                        <button
+                          onClick={() => setEditingInitial(null)}
+                          aria-label="Cancelar"
+                          style={{ padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
+                          <X size={15} />
+                        </button>
+                      </div>
+                      {initialError && (
+                        <div style={{ background: '#FAECE7', color: '#712B13', fontSize: '12px', padding: '8px 10px', borderRadius: '8px', marginTop: '8px' }}>
+                          {initialError}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <button
+                      onClick={() => startEditInitial(w)}
+                      style={{
+                        background: 'none', border: 'none', cursor: 'pointer', padding: '6px 0', marginTop: '2px',
+                        display: 'inline-flex', alignItems: 'center', gap: '6px',
+                        fontSize: '12px', color: 'var(--text-muted)',
+                      }}>
+                      Saldo inicial: {formatCOP(w.initial_balance || 0)}
+                      <Pencil size={12} />
+                    </button>
+                  )}
                 </div>
 
                 {/* Botones ingresos y gastos */}

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Trash2, ArrowRightLeft, Search, X } from 'lucide-react'
 import { supabase } from '../../supabaseClient'
-import { walletBalances } from '../../utils/balances'
+import { walletBalances, initialBalancesByName } from '../../utils/balances'
 import BalanceLine from './BalanceLine'
 import useIsMobile from '../../hooks/useIsMobile'
 
@@ -18,6 +18,7 @@ function normalize(text) {
 
 function Movements() {
   const [transactions, setTransactions] = useState([])
+  const [wallets,      setWallets]      = useState([])
   const [loading,      setLoading]      = useState(true)
   const [filterType,   setFilterType]   = useState('all')
   const [filterCat,    setFilterCat]    = useState('Todas')
@@ -30,13 +31,14 @@ function Movements() {
 
   async function fetchTransactions() {
     setLoading(true)
-    const { data, error } = await supabase
-      .from('transactions')
-      .select('*')
-      .order('created_at', { ascending: false })
+    const [{ data, error }, { data: walletData }] = await Promise.all([
+      supabase.from('transactions').select('*').order('created_at', { ascending: false }),
+      supabase.from('wallets').select('*'),
+    ])
 
     if (error) console.error(error)
     else setTransactions(data)
+    if (walletData) setWallets(walletData)
     setLoading(false)
   }
 
@@ -54,7 +56,7 @@ function Movements() {
   }
 
   // Saldo de cada billetera antes y después de cada movimiento (se calcula con todos, no solo los filtrados)
-  const balances = walletBalances(transactions)
+  const balances = walletBalances(transactions, initialBalancesByName(wallets))
 
   // Búsqueda por descripción, categoría, cuenta, fecha o monto
   const query       = normalize(search.trim())
