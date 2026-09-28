@@ -2,8 +2,9 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
 import { ArrowRightLeft } from 'lucide-react'
 import useIsMobile from '../../hooks/useIsMobile'
+import { defaultWallets, mergeWithDefaults } from '../../data/defaultWallets'
 
-const defaultWalletNames = ['Efectivo', 'Nequi', 'Banco Falabella']
+const defaultWalletNames = defaultWallets.map(w => w.name)
 
 function TransferForm({ session, onTransfer }) {
   const [walletNames,  setWalletNames]  = useState(defaultWalletNames)
@@ -17,13 +18,13 @@ function TransferForm({ session, onTransfer }) {
 
   useEffect(() => {
     async function loadWallets() {
-      const { data } = await supabase.from('wallets').select('name')
+      const { data } = await supabase.from('wallets').select('*')
       if (data) {
-        const names = data.map(w => w.name)
-        const merged = [...new Set([...defaultWalletNames, ...names])]
-        setWalletNames(merged)
-        setFrom(merged[0])
-        setTo(merged[1] || merged[0])
+        // Sin las billeteras eliminadas
+        const names = mergeWithDefaults(data).map(w => w.name)
+        setWalletNames(names)
+        setFrom(names[0] || '')
+        setTo(names[1] || names[0] || '')
       } else {
         setFrom(defaultWalletNames[0])
         setTo(defaultWalletNames[1])

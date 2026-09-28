@@ -6,12 +6,18 @@ export const defaultWallets = [
   { name: 'Banco Falabella', color: '#185FA5', bg: '#E6F1FB' },
 ]
 
-// Billeteras por defecto primero (usando la guardada si ya existe) y después las que creó el usuario
+// Billeteras por defecto primero (usando la guardada si ya existe) y después las que creó el usuario.
+// Las eliminadas quedan guardadas con hidden = true para que una billetera por defecto no vuelva a aparecer.
 export function mergeWithDefaults(walletRows) {
-  const rows = walletRows || []
+  const rows    = walletRows || []
+  const visible = rows.filter(w => !w.hidden)
+  const hidden  = rows.filter(w => w.hidden).map(w => w.name)
   const defaultNames = defaultWallets.map(w => w.name)
-  const defaults = defaultWallets.map(d => rows.find(w => w.name === d.name) || d)
-  const custom = rows.filter(w => !defaultNames.includes(w.name))
+
+  const defaults = defaultWallets
+    .map(d => visible.find(w => w.name === d.name) || (hidden.includes(d.name) ? null : d))
+    .filter(Boolean)
+  const custom = visible.filter(w => !defaultNames.includes(w.name))
   return [...defaults, ...custom]
 }
 

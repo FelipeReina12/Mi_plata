@@ -1,31 +1,32 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
 import useIsMobile from '../../hooks/useIsMobile'
+import { defaultWallets, mergeWithDefaults } from '../../data/defaultWallets'
 
 const categoryOptions = [
   'Comida', 'Transporte', 'Servicios', 'Entretenimiento', 'Salario', 'Otros ingresos', 'Otros'
 ]
 
-const defaultWalletNames = ['Efectivo', 'Nequi', 'Banco Falabella']
+const defaultWalletNames = defaultWallets.map(w => w.name)
 
 function TransactionForm({ onAdd }) {
   const [type,        setType]        = useState('expense')
   const [description, setDescription] = useState('')
   const [amount,      setAmount]      = useState('')
   const [category,    setCategory]    = useState('Comida')
-  const [wallet,      setWallet]      = useState('')
+  const [wallet,      setWallet]      = useState(defaultWalletNames[0])
   const [walletNames, setWalletNames] = useState(defaultWalletNames)
   const isMobile = useIsMobile()
 
   useEffect(() => {
     async function loadWallets() {
-      const { data, error } = await supabase.from('wallets').select('name')
+      const { data, error } = await supabase.from('wallets').select('*')
       if (error) { console.error(error); return }
 
-      const names = data.map(w => w.name)
-      const merged = [...new Set([...defaultWalletNames, ...names])]
-      setWalletNames(merged)
-      setWallet(merged[0])
+      // Sin las billeteras eliminadas
+      const names = mergeWithDefaults(data).map(w => w.name)
+      setWalletNames(names)
+      setWallet(names[0] || '')
     }
     loadWallets()
   }, [])

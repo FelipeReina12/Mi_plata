@@ -38,6 +38,10 @@ function Wallets({ session }) {
   const [walletsLoaded, setWalletsLoaded] = useState(false)
   // expanded: { wallet: 'Nequi', type: 'income' } o null
   const [expanded, setExpanded] = useState(null)
+  // Billetera que se va a eliminar (abre la confirmación)
+  const [toDelete, setToDelete] = useState(null)
+  const [deleting, setDeleting] = useState(false)
+  const [deleteError, setDeleteError] = useState('')
 
   useEffect(() => {
     loadAll()
@@ -95,6 +99,49 @@ function Wallets({ session }) {
     if (!ok) return
     const { error } = await supabase.from('transactions').delete().eq('id', id)
     if (!error) setTransactions(transactions.filter(t => t.id !== id))
+  }
+
+  async function handleDeleteWallet(w) {
+    setDeleting(true)
+    setDeleteError('')
+
+    // 1. Ocultar la billetera. Se marca hidden en vez de borrarla para que Efectivo, Nequi y
+    //    Banco Falabella (que vienen por defecto) no vuelvan a aparecer.
+    const { data, error } = w.id
+      ? await supabase.from('wallets').update({ hidden: true }).eq('id', w.id).select()
+      : await supabase.from('wallets').insert([{ name: w.name, color: w.color, bg: w.bg, initial_balance: 0, hidden: true, user_id: session.user.id }]).select()
+
+    if (error || !data?.length) {
+      console.error(error)
+      if (error?.message?.includes('hidden')) setDeleteError('Falta crear la columna hidden en Supabase.')
+      else if (!error) setDeleteError('Supabase no permitió actualizar la billetera. Revisa la política UPDATE de la tabla wallets.')
+      else setDeleteError('No se pudo eliminar la billetera.')
+      setDeleting(false)
+      return
+    }
+
+    // 2. Borrar sus movimientos (solo después de ocultarla, para no perder nada si lo anterior falla).
+    //    La otra mitad de sus transferencias se queda en la otra billetera: esa plata sí entró o salió de allá.
+    if (w.movements.length > 0) {
+      const { error: txError } = await supabase
+        .from('transactions')
+        .delete()
+        .eq('wallet', w.name)
+        .eq('user_id', session.user.id)
+      if (txError) {
+        console.error(txError)
+        setDeleteError('La billetera se eliminó, pero no sus movimientos. Puedes borrarlos desde Movimientos.')
+        setWallets(wallets.filter(x => x.name !== w.name))
+        setDeleting(false)
+        return
+      }
+    }
+
+    setWallets(wallets.filter(x => x.name !== w.name))
+    setTransactions(transactions.filter(t => t.wallet !== w.name))
+    if (expanded?.wallet === w.name) setExpanded(null)
+    setToDelete(null)
+    setDeleting(false)
   }
 
   function toggleExpand(walletName, type) {
@@ -271,7 +318,18 @@ function Wallets({ session }) {
                   <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: w.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <Wallet size={18} color={w.color} />
                   </div>
-                  <span style={{ fontWeight: '600', fontSize: '15px', color: 'var(--text-main)' }}>{w.name}</span>
+                  <span style={{ fontWeight: '600', fontSize: '15px', color: 'var(--text-main)', flex: 1, minWidth: 0, textAlign: 'left' }}>{w.name}</span>
+                  {walletsWithBalance.length > 1 && (
+                    <button
+                      onClick={() => { setToDelete(w); setDeleteError('') }}
+                      aria-label={`Eliminar ${w.name}`}
+                      style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '8px', margin: '-8px', display: 'flex', flexShrink: 0 }}
+                      onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}
+                      onMouseLeave={e => e.currentTarget.style.color = 'var(--text-lighter)'}
+                    >
+                      <Trash2 size={16} />
+                    </button>
+                  )}
                 </div>
 
                 {/* Saldo */}
@@ -391,6 +449,72 @@ function Wallets({ session }) {
           )
         })}
       </div>
+
+      {/* Confirmación para eliminar billetera */}
+      <AnimatePresence>
+        {toDelete && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => !deleting && setToDelete(null)}
+            style={{
+              position: 'fixed', inset: 0, zIndex: 200, background: 'rgba(0, 0, 0, 0.45)',
+              display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '16px',
+            }}
+          >
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+              role="dialog"
+              aria-modal="true"
+              style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '22px', width: '100%', maxWidth: '360px', textAlign: 'left' }}
+            >
+              <h3 style={{ fontSize: '16px', fontWeight: '600', color: 'var(--text-main)', margin: '0 0 10px' }}>
+                ¿Eliminar {toDelete.name}?
+              </h3>
+              <div style={{ fontSize: '13px', color: 'var(--text-muted)', lineHeight: '1.5' }}>
+                {toDelete.movements.length > 0 ? (
+                  <p style={{ marginBottom: '8px' }}>
+                    Tiene <strong style={{ color: 'var(--text-main)' }}>{toDelete.movements.length} movimiento{toDelete.movements.length !== 1 ? 's' : ''}</strong> que también se eliminará{toDelete.movements.length !== 1 ? 'n' : ''}.
+                  </p>
+                ) : (
+                  <p style={{ marginBottom: '8px' }}>No tiene movimientos.</p>
+                )}
+                {toDelete.balance !== 0 && (
+                  <p style={{ marginBottom: '8px' }}>
+                    Su saldo de <strong style={{ color: 'var(--text-main)' }}>{formatCOP(toDelete.balance)}</strong> dejará de contar en tu saldo total.
+                  </p>
+                )}
+                <p>Esto no se puede deshacer.</p>
+              </div>
+
+              {deleteError && (
+                <div style={{ background: '#FAECE7', color: '#712B13', fontSize: '12px', padding: '8px 10px', borderRadius: '8px', marginTop: '12px' }}>
+                  {deleteError}
+                </div>
+              )}
+
+              <div style={{ display: 'flex', gap: '8px', marginTop: '18px' }}>
+                <button
+                  onClick={() => setToDelete(null)}
+                  disabled={deleting}
+                  style={{ flex: 1, padding: '10px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
+                  Cancelar
+                </button>
+                <button
+                  onClick={() => handleDeleteWallet(toDelete)}
+                  disabled={deleting}
+                  style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: '#D85A30', color: '#fff', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
+                  {deleting ? 'Eliminando...' : 'Eliminar'}
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   )
 }

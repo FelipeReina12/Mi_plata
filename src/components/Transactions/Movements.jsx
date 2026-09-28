@@ -4,6 +4,7 @@ import { supabase } from '../../supabaseClient'
 import { walletBalances, initialBalancesByName } from '../../utils/balances'
 import BalanceLine from './BalanceLine'
 import useIsMobile from '../../hooks/useIsMobile'
+import { mergeWithDefaults } from '../../data/defaultWallets'
 
 const categoryOptions = ['Todas', 'Comida', 'Transporte', 'Servicios', 'Entretenimiento', 'Salario', 'Otros ingresos', 'Transferencia', 'Otros']
 
@@ -38,7 +39,7 @@ function Movements() {
 
     if (error) console.error(error)
     else setTransactions(data)
-    if (walletData) setWallets(walletData)
+    if (walletData) setWallets(mergeWithDefaults(walletData)) // sin las eliminadas
     setLoading(false)
   }
 

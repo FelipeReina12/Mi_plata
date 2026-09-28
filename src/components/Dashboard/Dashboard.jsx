@@ -7,6 +7,7 @@ import { motion } from 'framer-motion'
 import useIsMobile from '../../hooks/useIsMobile'
 import InitialBalanceSetup from '../Wallets/InitialBalanceSetup'
 import { mergeWithDefaults, replaceSaved } from '../../data/defaultWallets'
+import { balanceDelta } from '../../utils/balances'
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
@@ -75,7 +76,8 @@ function Dashboard({ session, setPage }) {
   const totalIncome  = thisMonthTxs.filter(t => t.type === 'income') .reduce((sum, t) => sum + t.amount, 0)
   const totalExpense = thisMonthTxs.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
   const initialTotal = wallets.reduce((sum, w) => sum + (w.initial_balance || 0), 0) // suma de los saldos iniciales
-  const totalBalance = initialTotal + transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0) - transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
+  // Misma cuenta que Billeteras: si se eliminó una billetera, la otra mitad de sus transferencias sigue contando
+  const totalBalance = initialTotal + transactions.reduce((sum, t) => sum + balanceDelta(t), 0)
 
   // Fecha actual dinámica
   const currentMonth = new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric' })
