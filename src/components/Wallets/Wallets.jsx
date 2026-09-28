@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
 import { Wallet, Plus, ArrowRightLeft, Trash2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
+import TransferForm from '../Transactions/TransferForm'
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
@@ -27,6 +28,7 @@ function Wallets({ session }) {
   const [wallets, setWallets] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
+  const [showTransfer, setShowTransfer] = useState(false)
   const [newName, setNewName] = useState('')
   const [newColor, setNewColor] = useState(colorOptions[0])
   const [saving, setSaving] = useState(false)
@@ -73,6 +75,11 @@ function Wallets({ session }) {
     setSaving(false)
   }
 
+  async function handleTransfer(newTxs) {
+    setTransactions(prev => [...newTxs, ...prev])
+    setShowTransfer(false)
+  }
+
   async function handleDeleteTx(id) {
     const ok = window.confirm('¿Eliminar este movimiento?')
     if (!ok) return
@@ -90,8 +97,20 @@ function Wallets({ session }) {
 
   const walletSummary = transactions.reduce((acc, t) => {
     if (!acc[t.wallet]) acc[t.wallet] = { income: 0, expense: 0, movements: [] }
-    if (t.type === 'income') acc[t.wallet].income += t.amount
-    if (t.type === 'expense') acc[t.wallet].expense += t.amount
+    if (t.type === 'income') {
+      acc[t.wallet].income += t.amount
+    } else if (t.type === 'expense') {
+      acc[t.wallet].expense += t.amount
+    } else if (t.type === 'transfer') {
+      // Salida de la billetera origen: descuenta del saldo
+      if (t.description.includes('→') || t.description.includes('->')) {
+        acc[t.wallet].expense += t.amount
+      }
+      // Entrada a la billetera destino: suma al saldo
+      else if (t.description.includes('←') || t.description.includes('<-')) {
+        acc[t.wallet].income += t.amount
+      }
+    }
     acc[t.wallet].movements.push(t)
     return acc
   }, {})
@@ -116,19 +135,46 @@ function Wallets({ session }) {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
         <h2 style={{ color: 'var(--text-main)', fontWeight: '600' }}>Billeteras</h2>
-        <button
-          onClick={() => setShowForm(!showForm)}
-          style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            padding: '8px 14px', borderRadius: '8px', border: 'none',
-            background: '#7F77DD', color: '#fff', fontSize: '13px',
-            fontWeight: '500', cursor: 'pointer',
-          }}>
-          <Plus size={15} /> Nueva billetera
-        </button>
+        <div style={{ display: 'flex', gap: '8px' }}>
+          <button
+            onClick={() => { setShowTransfer(!showTransfer); if (showForm) setShowForm(false) }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              padding: '8px 14px', borderRadius: '8px', border: '1px solid var(--border-light)',
+              background: showTransfer ? '#7F77DD' : 'var(--bg-card)',
+              color: showTransfer ? '#fff' : 'var(--text-main)',
+              fontSize: '13px', fontWeight: '500', cursor: 'pointer',
+            }}>
+            <ArrowRightLeft size={15} /> Transferir
+          </button>
+          <button
+            onClick={() => { setShowForm(!showForm); if (showTransfer) setShowTransfer(false) }}
+            style={{
+              display: 'flex', alignItems: 'center', gap: '6px',
+              padding: '8px 14px', borderRadius: '8px', border: 'none',
+              background: '#7F77DD', color: '#fff', fontSize: '13px',
+              fontWeight: '500', cursor: 'pointer',
+            }}>
+            <Plus size={15} /> Nueva billetera
+          </button>
+        </div>
       </div>
+
+      {/* Formulario de transferencia */}
+      <AnimatePresence>
+        {showTransfer && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            style={{ overflow: 'hidden', marginBottom: '16px' }}
+          >
+            <TransferForm session={session} onTransfer={handleTransfer} />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Formulario nueva billetera */}
       <AnimatePresence>
@@ -179,8 +225,8 @@ function Wallets({ session }) {
       {/* Tarjetas */}
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(2, 1fr)', gap: '14px' }}>
         {walletsWithBalance.map(w => {
-          const incomeMovs = w.movements.filter(t => t.type === 'income')
-          const expenseMovs = w.movements.filter(t => t.type === 'expense')
+          const incomeMovs = w.movements.filter(t => t.type === 'income' || (t.type === 'transfer' && (t.description.includes('←') || t.description.includes('<-'))))
+          const expenseMovs = w.movements.filter(t => t.type === 'expense' || (t.type === 'transfer' && (t.description.includes('→') || t.description.includes('->'))))
           const isExpandedIncome = expanded?.wallet === w.name && expanded?.type === 'income'
           const isExpandedExpense = expanded?.wallet === w.name && expanded?.type === 'expense'
 
@@ -257,7 +303,7 @@ function Wallets({ session }) {
                         display: 'flex', justifyContent: 'space-between', alignItems: 'center'
                       }}>
                         <span style={{ fontSize: '12px', fontWeight: '500', color: isExpandedIncome ? '#1D9E75' : '#D85A30' }}>
-                          {isExpandedIncome ? 'Ingresos' : 'Gastos'} en {w.name}
+                          {isExpandedIncome ? 'Ingresos y entradas' : 'Gastos y salidas'} en {w.name}
                         </span>
                         <button onClick={() => setExpanded(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)' }}>
                           <X size={14} />
@@ -265,35 +311,38 @@ function Wallets({ session }) {
                       </div>
 
                       <div style={{ padding: '0 20px' }}>
-                        {(isExpandedIncome ? incomeMovs : expenseMovs).map(t => (
-                          <div key={t.id} style={{
-                            display: 'flex', alignItems: 'center', gap: '10px',
-                            padding: '9px 0', borderBottom: '1px solid var(--border-dim)',
-                          }}>
-                            <div style={{ flex: 1, minWidth: 0 }}>
-                              <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-                                {t.description}
-                              </div>
-                              <div style={{ fontSize: '11px', color: 'var(--text-light)', marginTop: '1px' }}>
-                                {t.category} · {t.date}
-                              </div>
-                            </div>
-                            <div style={{
-                              fontSize: '13px', fontWeight: '600', flexShrink: 0,
-                              color: t.type === 'income' ? '#1D9E75' : '#D85A30',
+                        {(isExpandedIncome ? incomeMovs : expenseMovs).map(t => {
+                          const isIncoming = t.type === 'income' || (t.type === 'transfer' && (t.description.includes('←') || t.description.includes('<-')))
+                          return (
+                            <div key={t.id} style={{
+                              display: 'flex', alignItems: 'center', gap: '10px',
+                              padding: '9px 0', borderBottom: '1px solid var(--border-dim)',
                             }}>
-                              {t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
+                              <div style={{ flex: 1, minWidth: 0 }}>
+                                <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                                  {t.description}
+                                </div>
+                                <div style={{ fontSize: '11px', color: 'var(--text-light)', marginTop: '1px' }}>
+                                  {t.category} · {t.date}
+                                </div>
+                              </div>
+                              <div style={{
+                                fontSize: '13px', fontWeight: '600', flexShrink: 0,
+                                color: isIncoming ? '#1D9E75' : '#D85A30',
+                              }}>
+                                {isIncoming ? '+' : '-'}{formatCOP(t.amount)}
+                              </div>
+                              <button
+                                onClick={() => handleDeleteTx(t.id)}
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '4px', flexShrink: 0 }}
+                                onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}
+                                onMouseLeave={e => e.currentTarget.style.color = 'var(--text-lighter)'}
+                              >
+                                <Trash2 size={13} />
+                              </button>
                             </div>
-                            <button
-                              onClick={() => handleDeleteTx(t.id)}
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '4px', flexShrink: 0 }}
-                              onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}
-                              onMouseLeave={e => e.currentTarget.style.color = 'var(--text-lighter)'}
-                            >
-                              <Trash2 size={13} />
-                            </button>
-                          </div>
-                        ))}
+                          )
+                        })}
                       </div>
                     </div>
                   </motion.div>

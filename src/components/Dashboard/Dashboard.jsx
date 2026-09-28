@@ -25,7 +25,7 @@ function Dashboard({ session, setPage }) {
   async function fetchTransactions() {
     setLoading(true)
     const [{ data: txData }, { data: subData }] = await Promise.all([
-      supabase.from('transactions').select('*').order('created_at', { ascending: false }).limit(20),
+      supabase.from('transactions').select('*').order('created_at', { ascending: false }),
       supabase.from('subscriptions').select('*').order('next_date', { ascending: true })
     ])
 
@@ -66,10 +66,12 @@ function Dashboard({ session, setPage }) {
     setTransactions([...newTxs, ...transactions])
   }
 
-  // Solo ingresos y gastos reales para el saldo
-  const totalIncome  = transactions.filter(t => t.type === 'income') .reduce((sum, t) => sum + t.amount, 0)
-  const totalExpense = transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
-  const totalBalance = totalIncome - totalExpense
+  // Filtrar movimientos del mes actual para métricas de mes
+  const currentMonthKey = new Date().toISOString().slice(0, 7)
+  const thisMonthTxs = transactions.filter(t => t.date && t.date.startsWith(currentMonthKey))
+  const totalIncome  = thisMonthTxs.filter(t => t.type === 'income') .reduce((sum, t) => sum + t.amount, 0)
+  const totalExpense = thisMonthTxs.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
+  const totalBalance = transactions.filter(t => t.type === 'income').reduce((sum, t) => sum + t.amount, 0) - transactions.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
 
   // Fecha actual dinámica
   const currentMonth = new Date().toLocaleDateString('es-CO', { month: 'long', year: 'numeric' })
@@ -133,7 +135,7 @@ function Dashboard({ session, setPage }) {
           <p style={{ color: 'var(--text-light)', fontSize: '13px' }}>Aún no hay movimientos. ¡Registra el primero!</p>
         )}
 
-        {transactions.map((t, i) => (
+        {transactions.slice(0, 20).map((t, i) => (
           <motion.div
             key={t.id}
             initial={{ opacity: 0, x: -10 }}
@@ -161,7 +163,7 @@ function Dashboard({ session, setPage }) {
               fontSize: '13px', fontWeight: '600', flexShrink: 0, marginLeft: '10px',
               color: t.type === 'transfer' ? '#7F77DD' : t.type === 'income' ? '#1D9E75' : '#D85A30',
             }}>
-              {t.type === 'transfer' ? (t.description.includes('→') ? '-' : '+') : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
+              {t.type === 'transfer' ? (t.description.includes('→') || t.description.includes('->') ? '-' : '+') : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
             </div>
           </motion.div>
         ))}

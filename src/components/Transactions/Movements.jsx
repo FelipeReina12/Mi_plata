@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Trash2, ArrowRightLeft } from 'lucide-react'
+import { Trash2, ArrowRightLeft, Search, X } from 'lucide-react'
 import { supabase } from '../../supabaseClient'
 
 const categoryOptions = ['Todas', 'Comida', 'Transporte', 'Servicios', 'Entretenimiento', 'Salario', 'Otros ingresos', 'Transferencia', 'Otros']
@@ -8,11 +8,17 @@ function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
 }
 
+// Minúsculas y sin tildes para que "nomina" encuentre "Nómina"
+function normalize(text) {
+  return (text || '').toString().toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '')
+}
+
 function Movements() {
   const [transactions, setTransactions] = useState([])
   const [loading,      setLoading]      = useState(true)
   const [filterType,   setFilterType]   = useState('all')
   const [filterCat,    setFilterCat]    = useState('Todas')
+  const [search,       setSearch]       = useState('')
 
   useEffect(() => {
     fetchTransactions()
@@ -43,9 +49,18 @@ function Movements() {
     else setTransactions(transactions.filter(t => t.id !== id))
   }
 
+  // Búsqueda por descripción, categoría, cuenta, fecha o monto
+  const query       = normalize(search.trim())
+  const queryDigits = /^[\d.,$\s]+$/.test(search.trim()) ? search.replace(/\D/g, '') : ''
+
   const filtered = transactions
     .filter(t => filterType === 'all' || t.type === filterType)
     .filter(t => filterCat  === 'Todas' || t.category === filterCat)
+    .filter(t => {
+      if (!query) return true
+      if (queryDigits && String(t.amount).includes(queryDigits)) return true
+      return [t.description, t.category, t.wallet, t.date].some(field => normalize(field).includes(query))
+    })
 
   const btnFilter = (active) => ({
     padding: '7px 14px', borderRadius: '8px',
@@ -82,6 +97,35 @@ function Movements() {
           }}>
           {categoryOptions.map(c => <option key={c}>{c}</option>)}
         </select>
+
+        {/* Buscador */}
+        <div style={{ position: 'relative', marginTop: '12px' }}>
+          <Search size={15} color="var(--text-light)" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
+          <input
+            type="text"
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            placeholder="Buscar por descripción, categoría, cuenta o monto..."
+            style={{
+              width: '100%', boxSizing: 'border-box', padding: '8px 32px',
+              borderRadius: '8px', border: '1px solid var(--border-light)',
+              fontSize: '13px', color: 'var(--text-main)', background: 'var(--bg-input)', outline: 'none',
+            }}
+          />
+          {search && (
+            <button
+              onClick={() => setSearch('')}
+              aria-label="Limpiar búsqueda"
+              style={{
+                position: 'absolute', right: '6px', top: '50%', transform: 'translateY(-50%)',
+                background: 'none', border: 'none', cursor: 'pointer', padding: '4px',
+                color: 'var(--text-light)', display: 'flex', alignItems: 'center',
+              }}
+            >
+              <X size={14} />
+            </button>
+          )}
+        </div>
       </div>
 
       <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px' }}>
@@ -90,7 +134,9 @@ function Movements() {
         </div>
 
         {filtered.length === 0 && (
-          <p style={{ color: 'var(--text-light)', fontSize: '13px' }}>No hay movimientos con estos filtros.</p>
+          <p style={{ color: 'var(--text-light)', fontSize: '13px' }}>
+            {query ? 'No se encontraron movimientos con esa búsqueda.' : 'No hay movimientos con estos filtros.'}
+          </p>
         )}
 
         {filtered.map(t => (
@@ -123,7 +169,7 @@ function Movements() {
               fontSize: '13px', fontWeight: '600', flexShrink: 0,
               color: t.type === 'transfer' ? '#7F77DD' : t.type === 'income' ? '#1D9E75' : '#D85A30',
             }}>
-              {t.type === 'transfer' ? '↔' : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
+              {t.type === 'transfer' ? (t.description.includes('→') || t.description.includes('->') ? '-' : '+') : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
             </div>
 
             {/* Eliminar */}
