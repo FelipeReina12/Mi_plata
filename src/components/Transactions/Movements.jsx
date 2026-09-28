@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Trash2, ArrowRightLeft, Search, X } from 'lucide-react'
 import { supabase } from '../../supabaseClient'
-import { walletBalances, initialBalancesByName } from '../../utils/balances'
+import { walletBalances, initialBalancesByName, transferPartners, parseTransfer } from '../../utils/balances'
 import BalanceLine from './BalanceLine'
 import useIsMobile from '../../hooks/useIsMobile'
 import { mergeWithDefaults } from '../../data/defaultWallets'
@@ -47,26 +47,35 @@ function Movements() {
     setLoading(false)
   }
 
-  function handleSaved(updated) {
-    setTransactions(transactions.map(t => t.id === updated.id ? updated : t))
+  // Recibe uno o dos movimientos actualizados (una transferencia se edita con sus dos partes)
+  function handleSaved(updatedRows) {
+    setTransactions(transactions.map(t => updatedRows.find(u => u.id === t.id) || t))
     setEditing(null)
   }
 
-  async function handleDelete(id) {
-    const confirm = window.confirm('¿Seguro que quieres eliminar este movimiento?')
-    if (!confirm) return
+  async function handleDelete(t) {
+    // Si es una transferencia completa, se eliminan juntas la salida y la entrada
+    const partnerId = partners.get(t.id)
+    const transfer  = partnerId !== undefined && parseTransfer(t)
+    const message = transfer
+      ? `Se eliminará la transferencia completa: la salida de ${transfer.from} y la entrada a ${transfer.to}. ¿Continuar?`
+      : '¿Seguro que quieres eliminar este movimiento?'
+    if (!window.confirm(message)) return
 
+    const ids = transfer ? [t.id, partnerId] : [t.id]
     const { error } = await supabase
       .from('transactions')
       .delete()
-      .eq('id', id)
+      .in('id', ids)
 
     if (error) console.error(error)
-    else setTransactions(transactions.filter(t => t.id !== id))
+    else setTransactions(transactions.filter(x => !ids.includes(x.id)))
   }
 
   // Saldo de cada billetera antes y después de cada movimiento (se calcula con todos, no solo los filtrados)
   const balances = walletBalances(transactions, initialBalancesByName(wallets))
+  // Salida y entrada de cada transferencia: { id de una mitad → id de la otra }
+  const partners = transferPartners(transactions)
 
   // Búsqueda por descripción, categoría, cuenta, fecha o monto
   const query       = normalize(search.trim())
@@ -203,7 +212,7 @@ function Movements() {
 
             {/* Eliminar */}
             <button
-              onClick={e => { e.stopPropagation(); handleDelete(t.id) }}
+              onClick={e => { e.stopPropagation(); handleDelete(t) }}
               aria-label="Eliminar"
               style={{
                 background: 'none', border: 'none', cursor: 'pointer',
@@ -230,6 +239,7 @@ function Movements() {
           <EditTransactionModal
             key={editing.id}
             transaction={editing}
+            partner={transactions.find(t => t.id === partners.get(editing.id)) || null}
             walletNames={wallets.map(w => w.name)}
             onClose={() => setEditing(null)}
             onSaved={handleSaved}

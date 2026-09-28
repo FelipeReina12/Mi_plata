@@ -14,8 +14,9 @@ export function balanceDelta(t) {
 // Una transferencia se guarda como dos movimientos:
 //   salida:  "Ahorro → Nequi"            en la billetera Banco Falabella
 //   entrada: "Ahorro ← Banco Falabella"  en la billetera Nequi
-// Esta clave es la misma para las dos mitades, así se pueden emparejar.
-function transferKey(t) {
+// Devuelve { isOut, base: 'Ahorro', from: 'Banco Falabella', to: 'Nequi' } o null si no es una transferencia.
+export function parseTransfer(t) {
+  if (t.type !== 'transfer') return null
   const desc = t.description || ''
   for (const [arrow, isOut] of [['→', true], ['->', true], ['←', false], ['<-', false]]) {
     const i = desc.lastIndexOf(arrow)
@@ -23,33 +24,38 @@ function transferKey(t) {
     const base  = desc.slice(0, i).trim()
     const other = desc.slice(i + arrow.length).trim()
     const [from, to] = isOut ? [t.wallet, other] : [other, t.wallet]
-    return { isOut, key: [t.date, t.amount, base, from, to].join('|') }
+    return { isOut, base, from, to }
   }
   return null
 }
 
-// Ids de las transferencias que tienen sus dos mitades (salida y entrada).
-// Si una mitad quedó sola (p. ej. se eliminó la otra billetera), no está en el conjunto.
-export function pairedTransferIds(transactions) {
+// Las dos mitades de una misma transferencia tienen la misma clave
+function transferKey(t) {
+  const p = parseTransfer(t)
+  return p && { isOut: p.isOut, key: [t.date, t.amount, p.base, p.from, p.to].join('|') }
+}
+
+// Empareja la salida y la entrada de cada transferencia: Map { id de una mitad → id de la otra }.
+// Si una mitad quedó sola (p. ej. se eliminó la otra billetera), no está en el Map.
+export function transferPartners(transactions) {
   const outs = {}
   const ins  = {}
   for (const t of transactions) {
-    if (t.type !== 'transfer') continue
     const k = transferKey(t)
     if (!k) continue
     const bucket = k.isOut ? outs : ins
     ;(bucket[k.key] ||= []).push(t.id)
   }
-  const paired = new Set()
+  const partners = new Map()
   for (const key in outs) {
     const a = outs[key]
     const b = ins[key] || []
     for (let i = 0; i < Math.min(a.length, b.length); i++) {
-      paired.add(a[i])
-      paired.add(b[i])
+      partners.set(a[i], b[i])
+      partners.set(b[i], a[i])
     }
   }
-  return paired
+  return partners
 }
 
 // Saldo inicial de cada billetera: { 'Nequi': 500000, ... }
@@ -73,7 +79,7 @@ export function walletBalances(transactions, initialBalances = {}) {
   const running = {}
   const result  = {}
   // Una transferencia completa solo mueve plata entre billeteras: no cambia el total
-  const paired = pairedTransferIds(transactions)
+  const paired = transferPartners(transactions)
   // El total arranca con la suma de los saldos iniciales (igual que el "Saldo total" del Resumen)
   let total = Object.values(initialBalances).reduce((sum, v) => sum + v, 0)
   for (const t of ordered) {

@@ -4,7 +4,7 @@ import { Wallet, Plus, ArrowRightLeft, Trash2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import TransferForm from '../Transactions/TransferForm'
 import BalanceLine from '../Transactions/BalanceLine'
-import { walletBalances, initialBalancesByName } from '../../utils/balances'
+import { walletBalances, initialBalancesByName, transferPartners, parseTransfer } from '../../utils/balances'
 import useIsMobile from '../../hooks/useIsMobile'
 import { byDateDesc } from '../../utils/dates'
 import InitialBalanceSetup from './InitialBalanceSetup'
@@ -95,11 +95,17 @@ function Wallets({ session }) {
     setShowTransfer(false)
   }
 
-  async function handleDeleteTx(id) {
-    const ok = window.confirm('¿Eliminar este movimiento?')
+  async function handleDeleteTx(t) {
+    // Si es una transferencia completa, se eliminan juntas la salida y la entrada
+    const partnerId = transferPartners(transactions).get(t.id)
+    const transfer  = partnerId !== undefined && parseTransfer(t)
+    const ok = window.confirm(transfer
+      ? `Se eliminará la transferencia completa: la salida de ${transfer.from} y la entrada a ${transfer.to}. ¿Continuar?`
+      : '¿Eliminar este movimiento?')
     if (!ok) return
-    const { error } = await supabase.from('transactions').delete().eq('id', id)
-    if (!error) setTransactions(transactions.filter(t => t.id !== id))
+    const ids = transfer ? [t.id, partnerId] : [t.id]
+    const { error } = await supabase.from('transactions').delete().in('id', ids)
+    if (!error) setTransactions(transactions.filter(x => !ids.includes(x.id)))
   }
 
   async function handleDeleteWallet(w) {
@@ -425,7 +431,7 @@ function Wallets({ session }) {
                                 {isIncoming ? '+' : '-'}{formatCOP(t.amount)}
                               </div>
                               <button
-                                onClick={() => handleDeleteTx(t.id)}
+                                onClick={() => handleDeleteTx(t)}
                                 aria-label="Eliminar"
                                 style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '8px', margin: '-4px', flexShrink: 0, display: 'flex' }}
                                 onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}
