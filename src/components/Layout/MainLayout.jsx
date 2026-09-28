@@ -1,23 +1,19 @@
-import { useState, useEffect } from 'react'
 import Sidebar from './Sidebar'
 import BottomNav from './BottomNav'
+import useIsMobile from '../../hooks/useIsMobile'
 
 function MainLayout({ children, page, setPage }) {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
-
-  useEffect(() => {
-    const handleResize = () => setIsMobile(window.innerWidth < 768)
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
+  const isMobile = useIsMobile()
 
   return (
     <div style={{ display: 'flex', fontFamily: 'sans-serif' }}>
       {!isMobile && <Sidebar page={page} setPage={setPage} />}
       <main style={{
         flex: 1,
+        minWidth: 0,
         padding: isMobile ? '16px' : '24px',
-        paddingBottom: isMobile ? '80px' : '24px',
+        paddingTop: isMobile ? 'calc(16px + env(safe-area-inset-top))' : '24px',
+        paddingBottom: isMobile ? 'calc(88px + env(safe-area-inset-bottom))' : '24px',
         background: 'var(--bg-app)',
         minHeight: '100vh',
       }}>

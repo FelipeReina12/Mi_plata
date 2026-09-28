@@ -41,6 +41,26 @@
   }
 }
 
+/* El padding y el borde cuentan dentro del ancho: evita que los campos con width 100% se salgan de las tarjetas */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+button {
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* En celular, los campos a 16px evitan que iPhone haga zoom al tocarlos */
+@media (max-width: 767px) {
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+}
+
 body.dark {
   /* Mis Variables - Oscuro */
   --bg-app: #121212;
@@ -78,6 +98,12 @@ body {
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+
+  /* En celular el texto se lee mejor alineado a la izquierda y sin bordes laterales */
+  @media (max-width: 767px) {
+    text-align: left;
+    border-inline: none;
+  }
 }
 
 h1,

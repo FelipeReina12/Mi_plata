@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
+import useIsMobile from '../../hooks/useIsMobile'
 
 const categoryOptions = [
   'Comida', 'Transporte', 'Servicios', 'Entretenimiento', 'Salario', 'Otros ingresos', 'Otros'
@@ -14,6 +15,7 @@ function TransactionForm({ onAdd }) {
   const [category,    setCategory]    = useState('Comida')
   const [wallet,      setWallet]      = useState('')
   const [walletNames, setWalletNames] = useState(defaultWalletNames)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     async function loadWallets() {
@@ -93,7 +95,7 @@ function TransactionForm({ onAdd }) {
         />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
         <div>
           <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Categoría</label>
           <select style={inputStyle} value={category} onChange={e => setCategory(e.target.value)}>

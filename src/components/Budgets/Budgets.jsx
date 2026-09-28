@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
 import { Plus, Trash2, Target } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
+import useIsMobile from '../../hooks/useIsMobile'
 
 const categoryOptions = ['Comida', 'Transporte', 'Servicios', 'Entretenimiento', 'Otros']
 
@@ -22,6 +23,7 @@ function Budgets({ session }) {
   const [newCategory,  setNewCategory]  = useState(categoryOptions[0])
   const [newAmount,    setNewAmount]    = useState('')
   const [saving,       setSaving]       = useState(false)
+  const isMobile = useIsMobile()
 
   const month = currentMonthKey()
 
@@ -83,7 +85,7 @@ function Budgets({ session }) {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
         <h2 style={{ color: 'var(--text-main)', fontWeight: '600' }}>Presupuestos</h2>
         <button
           onClick={() => setShowForm(!showForm)}
@@ -108,7 +110,7 @@ function Budgets({ session }) {
             <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px' }}>
               <h3 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '14px' }}>Nuevo presupuesto mensual</h3>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
                 <div>
                   <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Categoría</label>
                   <select style={inputStyle} value={newCategory} onChange={e => setNewCategory(e.target.value)}>
@@ -151,7 +153,7 @@ function Budgets({ session }) {
               <div key={b.id} style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '18px 20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
                   <span style={{ fontWeight: '600', fontSize: '14px', color: 'var(--text-main)' }}>{b.category}</span>
-                  <button onClick={() => handleDelete(b.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)' }}>
+                  <button onClick={() => handleDelete(b.id)} aria-label="Eliminar" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '8px', margin: '-8px', display: 'flex' }}>
                     <Trash2 size={14} />
                   </button>
                 </div>

@@ -88,7 +88,7 @@ function Advisor({ session, setPage }) {
       {!response && !loading && (
         <motion.div 
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-          style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '30px', textAlign: 'center', border: '1px solid var(--border-light)' }}
+          style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: 'clamp(20px, 6vw, 30px)', textAlign: 'center', border: '1px solid var(--border-light)' }}
         >
           <div style={{ background: 'rgba(127, 119, 221, 0.1)', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
             <Sparkles color="#7F77DD" size={30} />
@@ -146,7 +146,7 @@ function Advisor({ session, setPage }) {
       {response && !loading && (
         <motion.div 
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-          style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: '30px', border: '1px solid var(--border-light)' }}
+          style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: 'clamp(18px, 5vw, 30px)', border: '1px solid var(--border-light)' }}
         >
           <div className="markdown-body" style={{ color: 'var(--text-main)', fontSize: '15px', lineHeight: '1.6' }}>
             <ReactMarkdown>{response}</ReactMarkdown>

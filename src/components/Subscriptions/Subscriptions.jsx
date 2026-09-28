@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
 import { Plus, Trash2, Calendar, Repeat } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
+import useIsMobile from '../../hooks/useIsMobile'
 
 const categoryOptions = ['Entretenimiento', 'Servicios', 'Vivienda', 'Educación', 'Salud', 'Otros']
 
@@ -36,6 +37,7 @@ function Subscriptions({ session }) {
   const [newCategory, setNewCategory] = useState(categoryOptions[0])
   const [newDate, setNewDate] = useState('')
   const [saving, setSaving] = useState(false)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     loadSubscriptions()
@@ -105,7 +107,7 @@ function Subscriptions({ session }) {
 
   return (
     <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', flexWrap: 'wrap', gap: '10px' }}>
         <h2 style={{ color: 'var(--text-main)', fontWeight: '600' }}>Suscripciones y Gastos fijos</h2>
         <button
           onClick={() => setShowForm(!showForm)}
@@ -130,7 +132,7 @@ function Subscriptions({ session }) {
             <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px' }}>
               <h3 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '14px' }}>Nuevo gasto recurrente</h3>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '10px', marginBottom: '12px' }}>
                 <div>
                   <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Nombre</label>
                   <input style={inputStyle} placeholder="Ej: Netflix, Arriendo..." value={newName} onChange={e => setNewName(e.target.value)} />
@@ -141,7 +143,7 @@ function Subscriptions({ session }) {
                 </div>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '10px', marginBottom: '16px' }}>
                 <div>
                   <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Categoría</label>
                   <select style={inputStyle} value={newCategory} onChange={e => setNewCategory(e.target.value)}>
@@ -192,7 +194,7 @@ function Subscriptions({ session }) {
               <div key={s.id} style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '16px 20px' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '8px' }}>
                   <span style={{ fontWeight: '600', fontSize: '15px', color: 'var(--text-main)' }}>{s.name}</span>
-                  <button onClick={() => handleDelete(s.id)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)' }}>
+                  <button onClick={() => handleDelete(s.id)} aria-label="Eliminar" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '8px', margin: '-8px', display: 'flex' }}>
                     <Trash2 size={14} />
                   </button>
                 </div>

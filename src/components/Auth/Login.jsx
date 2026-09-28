@@ -47,10 +47,11 @@ function Login() {
     <div style={{
       minHeight: '100vh', background: 'var(--bg-app)',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
+      padding: '16px',
     }}>
       <div style={{
         background: 'var(--bg-card)', borderRadius: '16px',
-        border: '1px solid var(--border-light)', padding: '40px',
+        border: '1px solid var(--border-light)', padding: 'clamp(24px, 7vw, 40px)',
         width: '100%', maxWidth: '380px',
       }}>
 

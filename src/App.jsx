@@ -33,6 +33,11 @@ function App() {
     }
   }, [darkMode])
 
+  // Al cambiar de sección, volver arriba (en celular la página quedaba a mitad de scroll)
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [page])
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session)

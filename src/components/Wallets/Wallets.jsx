@@ -3,6 +3,7 @@ import { supabase } from '../../supabaseClient'
 import { Wallet, Plus, ArrowRightLeft, Trash2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import TransferForm from '../Transactions/TransferForm'
+import useIsMobile from '../../hooks/useIsMobile'
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
@@ -32,15 +33,12 @@ function Wallets({ session }) {
   const [newName, setNewName] = useState('')
   const [newColor, setNewColor] = useState(colorOptions[0])
   const [saving, setSaving] = useState(false)
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 768)
+  const isMobile = useIsMobile()
   // expanded: { wallet: 'Nequi', type: 'income' } o null
   const [expanded, setExpanded] = useState(null)
 
   useEffect(() => {
     loadAll()
-    const handleResize = () => setIsMobile(window.innerWidth < 768)
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   async function loadAll() {
@@ -305,7 +303,7 @@ function Wallets({ session }) {
                         <span style={{ fontSize: '12px', fontWeight: '500', color: isExpandedIncome ? '#1D9E75' : '#D85A30' }}>
                           {isExpandedIncome ? 'Ingresos y entradas' : 'Gastos y salidas'} en {w.name}
                         </span>
-                        <button onClick={() => setExpanded(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)' }}>
+                        <button onClick={() => setExpanded(null)} aria-label="Cerrar" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '8px', margin: '-8px', display: 'flex' }}>
                           <X size={14} />
                         </button>
                       </div>
@@ -334,11 +332,12 @@ function Wallets({ session }) {
                               </div>
                               <button
                                 onClick={() => handleDeleteTx(t.id)}
-                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '4px', flexShrink: 0 }}
+                                aria-label="Eliminar"
+                                style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '8px', margin: '-4px', flexShrink: 0, display: 'flex' }}
                                 onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}
                                 onMouseLeave={e => e.currentTarget.style.color = 'var(--text-lighter)'}
                               >
-                                <Trash2 size={13} />
+                                <Trash2 size={15} />
                               </button>
                             </div>
                           )

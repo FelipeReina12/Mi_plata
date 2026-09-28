@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
 import { ArrowRightLeft } from 'lucide-react'
+import useIsMobile from '../../hooks/useIsMobile'
 
 const defaultWalletNames = ['Efectivo', 'Nequi', 'Banco Falabella']
 
@@ -12,6 +13,7 @@ function TransferForm({ session, onTransfer }) {
   const [description,  setDescription]  = useState('Transferencia')
   const [saving,       setSaving]       = useState(false)
   const [error,        setError]        = useState('')
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     async function loadWallets() {
@@ -91,16 +93,16 @@ function TransferForm({ session, onTransfer }) {
         <h3 style={{ fontSize: '14px', color: 'var(--text-main)', fontWeight: '600' }}>Transferencia entre billeteras</h3>
       </div>
 
-      {/* Origen y destino */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr auto 1fr', gap: '8px', alignItems: 'center', marginBottom: '12px' }}>
+      {/* Origen y destino — en celular uno debajo del otro para que se lean los nombres */}
+      <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr auto 1fr', gap: isMobile ? '4px' : '8px', alignItems: 'center', marginBottom: '12px' }}>
         <div>
           <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Desde</label>
           <select style={inputStyle} value={from} onChange={e => setFrom(e.target.value)}>
             {walletNames.map(w => <option key={w}>{w}</option>)}
           </select>
         </div>
-        <div style={{ textAlign: 'center', color: '#7F77DD', marginTop: '18px' }}>
-          <ArrowRightLeft size={18} />
+        <div style={{ textAlign: 'center', color: '#7F77DD', marginTop: isMobile ? '4px' : '18px' }}>
+          <ArrowRightLeft size={18} style={{ transform: isMobile ? 'rotate(90deg)' : 'none' }} />
         </div>
         <div>
           <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Hacia</label>

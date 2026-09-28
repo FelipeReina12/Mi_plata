@@ -105,7 +105,7 @@ function Movements() {
             type="text"
             value={search}
             onChange={e => setSearch(e.target.value)}
-            placeholder="Buscar por descripción, categoría, cuenta o monto..."
+            placeholder="Buscar movimiento o monto..."
             style={{
               width: '100%', boxSizing: 'border-box', padding: '8px 32px',
               borderRadius: '8px', border: '1px solid var(--border-light)',
@@ -175,9 +175,10 @@ function Movements() {
             {/* Eliminar */}
             <button
               onClick={() => handleDelete(t.id)}
+              aria-label="Eliminar"
               style={{
                 background: 'none', border: 'none', cursor: 'pointer',
-                color: 'var(--text-lighter)', padding: '4px', borderRadius: '6px',
+                color: 'var(--text-lighter)', padding: '8px', margin: '-4px', borderRadius: '6px',
                 display: 'flex', alignItems: 'center', flexShrink: 0,
               }}
               onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}

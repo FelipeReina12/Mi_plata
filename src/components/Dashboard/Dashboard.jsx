@@ -4,6 +4,7 @@ import TransactionForm from '../Transactions/TransactionForm'
 import TransferForm from '../Transactions/TransferForm'
 import { supabase } from '../../supabaseClient'
 import { motion } from 'framer-motion'
+import useIsMobile from '../../hooks/useIsMobile'
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
@@ -13,13 +14,10 @@ function Dashboard({ session, setPage }) {
   const [transactions,  setTransactions]  = useState([])
   const [subscriptions, setSubscriptions] = useState([])
   const [loading,       setLoading]       = useState(true)
-  const [isMobile,      setIsMobile]      = useState(window.innerWidth < 768)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     fetchTransactions()
-    const handleResize = () => setIsMobile(window.innerWidth < 768)
-    window.addEventListener('resize', handleResize)
-    return () => window.removeEventListener('resize', handleResize)
   }, [])
 
   async function fetchTransactions() {
@@ -91,14 +89,17 @@ function Dashboard({ session, setPage }) {
         transition={{ duration: 0.3 }}
         style={{
           display: 'grid',
-          gridTemplateColumns: isMobile ? '1fr' : 'repeat(3, 1fr)',
-          gap: '14px',
-          marginBottom: '24px'
+          // En celular: saldo total a lo ancho e ingresos/gastos lado a lado
+          gridTemplateColumns: isMobile ? '1fr 1fr' : 'repeat(3, 1fr)',
+          gap: isMobile ? '10px' : '14px',
+          marginBottom: isMobile ? '20px' : '24px'
         }}
       >
-        <MetricCard label="Saldo total" value={formatCOP(totalBalance)} sub="Todas las cuentas" color="var(--text-main)" />
-        <MetricCard label="Ingresos"    value={formatCOP(totalIncome)}   sub="Este mes"         color="#1D9E75" />
-        <MetricCard label="Gastos"      value={formatCOP(totalExpense)}  sub="Este mes"         color="#D85A30" />
+        <div style={{ gridColumn: isMobile ? '1 / -1' : 'auto' }}>
+          <MetricCard label="Saldo total" value={formatCOP(totalBalance)} sub="Todas las cuentas" color="var(--text-main)" />
+        </div>
+        <MetricCard label="Ingresos" value={formatCOP(totalIncome)}  sub="Este mes" color="#1D9E75" compact={isMobile} />
+        <MetricCard label="Gastos"   value={formatCOP(totalExpense)} sub="Este mes" color="#D85A30" compact={isMobile} />
       </motion.div>
 
       <TransactionForm onAdd={handleAdd} />
