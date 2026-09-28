@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Trash2, ArrowRightLeft, Search, X } from 'lucide-react'
 import { supabase } from '../../supabaseClient'
+import { walletBalances } from '../../utils/balances'
+import BalanceLine from './BalanceLine'
+import useIsMobile from '../../hooks/useIsMobile'
 
 const categoryOptions = ['Todas', 'Comida', 'Transporte', 'Servicios', 'Entretenimiento', 'Salario', 'Otros ingresos', 'Transferencia', 'Otros']
 
@@ -19,6 +22,7 @@ function Movements() {
   const [filterType,   setFilterType]   = useState('all')
   const [filterCat,    setFilterCat]    = useState('Todas')
   const [search,       setSearch]       = useState('')
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     fetchTransactions()
@@ -48,6 +52,9 @@ function Movements() {
     if (error) console.error(error)
     else setTransactions(transactions.filter(t => t.id !== id))
   }
+
+  // Saldo de cada billetera antes y después de cada movimiento (se calcula con todos, no solo los filtrados)
+  const balances = walletBalances(transactions)
 
   // Búsqueda por descripción, categoría, cuenta, fecha o monto
   const query       = normalize(search.trim())
@@ -141,7 +148,8 @@ function Movements() {
 
         {filtered.map(t => (
           <div key={t.id} style={{
-            display: 'flex', alignItems: 'center', gap: '12px',
+            display: 'grid', gridTemplateColumns: 'auto minmax(0, 1fr) auto auto',
+            alignItems: 'center', columnGap: '12px', rowGap: '3px',
             padding: '10px 0', borderBottom: '1px solid var(--border-dim)',
           }}>
 
@@ -155,7 +163,7 @@ function Movements() {
             }
 
             {/* Info */}
-            <div style={{ flex: 1, minWidth: 0 }}>
+            <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                 {t.description}
               </div>
@@ -186,6 +194,11 @@ function Movements() {
             >
               <Trash2 size={15} />
             </button>
+
+            {/* Saldo de la billetera antes → después (en celular ocupa también el ancho del monto) */}
+            <div style={{ gridColumn: isMobile ? '2 / 4' : '2 / 3' }}>
+              <BalanceLine balance={balances[t.id]} />
+            </div>
           </div>
         ))}
       </div>

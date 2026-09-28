@@ -3,6 +3,8 @@ import { supabase } from '../../supabaseClient'
 import { Wallet, Plus, ArrowRightLeft, Trash2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'framer-motion'
 import TransferForm from '../Transactions/TransferForm'
+import BalanceLine from '../Transactions/BalanceLine'
+import { walletBalances } from '../../utils/balances'
 import useIsMobile from '../../hooks/useIsMobile'
 
 function formatCOP(num) {
@@ -122,6 +124,9 @@ function Wallets({ session }) {
   }))
 
   const totalBalance = walletsWithBalance.reduce((sum, w) => sum + w.balance, 0)
+
+  // Saldo de la billetera antes y después de cada movimiento
+  const balances = walletBalances(transactions)
 
   const inputStyle = {
     width: '100%', padding: '9px 12px', fontSize: '14px',
@@ -313,10 +318,11 @@ function Wallets({ session }) {
                           const isIncoming = t.type === 'income' || (t.type === 'transfer' && (t.description.includes('←') || t.description.includes('<-')))
                           return (
                             <div key={t.id} style={{
-                              display: 'flex', alignItems: 'center', gap: '10px',
+                              display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) auto auto',
+                              alignItems: 'center', columnGap: '10px', rowGap: '3px',
                               padding: '9px 0', borderBottom: '1px solid var(--border-dim)',
                             }}>
-                              <div style={{ flex: 1, minWidth: 0 }}>
+                              <div style={{ minWidth: 0 }}>
                                 <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                                   {t.description}
                                 </div>
@@ -339,6 +345,11 @@ function Wallets({ session }) {
                               >
                                 <Trash2 size={15} />
                               </button>
+
+                              {/* Saldo de la billetera antes → después */}
+                              <div style={{ gridColumn: isMobile ? '1 / 3' : '1 / 2' }}>
+                                <BalanceLine balance={balances[t.id]} />
+                              </div>
                             </div>
                           )
                         })}
