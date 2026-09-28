@@ -74,7 +74,7 @@ function App() {
           {page === 'wallets'   && <Wallets session={session} />}
           {page === 'budgets'   && <Budgets session={session} />}
           {page === 'subscriptions' && <Subscriptions session={session} />}
-          {page === 'advisor'       && <Advisor session={session} setPage={setPage} />}
+          {page === 'advisor'       && <Advisor />}
           {page === 'settings'      && <Settings darkMode={darkMode} setDarkMode={setDarkMode} />}
         </motion.div>
       </AnimatePresence>

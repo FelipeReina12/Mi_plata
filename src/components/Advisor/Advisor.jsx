@@ -3,76 +3,49 @@ import { supabase } from '../../supabaseClient'
 import { Sparkles, AlertCircle, Loader2 } from 'lucide-react'
 import ReactMarkdown from 'react-markdown'
 import { motion } from 'framer-motion'
-import { GoogleGenAI } from '@google/genai'
+import { currentMonthLocal } from '../../utils/dates'
 
-function Advisor({ session, setPage }) {
+// Mensaje para cada error que puede devolver /api/advisor
+const errorMessages = {
+  no_data:      'No tienes ingresos ni gastos este mes para analizar.',
+  rate_limited: 'La IA llegó a su límite de uso gratuito por ahora. Intenta de nuevo en unos minutos; si sigue igual, el límite diario se reinicia mañana.',
+  overloaded:   'Los servidores de Gemini están muy ocupados en este momento. Intenta de nuevo en un momento.',
+  bad_key:      'La clave de Gemini no es válida o fue bloqueada. Crea una nueva en Google AI Studio y actualízala en Vercel.',
+  no_key:       'Falta configurar la variable GEMINI_API_KEY en el servidor.',
+  unauthorized: 'Tu sesión expiró. Cierra sesión y vuelve a entrar.',
+  network:      'No se pudo conectar. Revisa tu conexión a internet e intenta de nuevo.',
+  api_error:    'Algo falló al generar el análisis. Intenta de nuevo.',
+}
+
+function Advisor() {
   const [loading, setLoading] = useState(false)
   const [response, setResponse] = useState(null)
   const [error, setError] = useState(null)
 
   async function handleAnalyze() {
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY
-    
-    if (!apiKey) {
-      setError('no_key')
-      return
-    }
-
     setLoading(true)
     setError(null)
     setResponse(null)
 
     try {
-      // 1. Obtener datos del usuario (mes actual)
-      const d = new Date()
-      const currentMonth = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
-
-      const { data: txs } = await supabase
-        .from('transactions')
-        .select('description, amount, type, category, date')
-        .gte('date', currentMonth + '-01')
-
-      if (!txs || txs.length === 0) {
-        setLoading(false)
-        setError('no_data')
-        return
-      }
-
-      // 2. Preparar el prompt
-      const incomes = txs.filter(t => t.type === 'income').reduce((s, t) => s + t.amount, 0)
-      const expenses = txs.filter(t => t.type === 'expense').reduce((s, t) => s + t.amount, 0)
-      
-      const prompt = `Eres un asesor financiero experto y amigable. Un usuario te ha compartido sus gastos e ingresos de este mes en Colombia (moneda COP).
-      
-      Resumen numérico:
-      - Ingresos totales: $${incomes}
-      - Gastos totales: $${expenses}
-      
-      Detalle de movimientos:
-      ${JSON.stringify(txs)}
-      
-      Por favor, genera un reporte en formato Markdown que contenga:
-      1. Un análisis muy breve y amable de sus hábitos de consumo este mes.
-      2. 3 consejos accionables y específicos basados en los gastos exactos que ves en los datos para ayudarle a ahorrar más.
-      
-      Usa un tono motivador, directo y profesional. Usa emojis apropiados. NO uses bloques de código en tu respuesta.`
-
-      // 3. Llamar a la API usando el SDK oficial
-      const ai = new GoogleGenAI({ apiKey })
-      const res = await ai.models.generateContent({
-        model: 'gemini-3.7-flash',
-        contents: prompt
+      // La llamada a Gemini la hace el servidor (/api/advisor) con la sesión del usuario:
+      // así la clave de la IA no queda expuesta en el navegador
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch('/api/advisor', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${session?.access_token || ''}`,
+        },
+        body: JSON.stringify({ month: currentMonthLocal() }),
       })
+      const data = await res.json().catch(() => ({}))
 
-      if (res.text) {
-        setResponse(res.text)
-      } else {
-        throw new Error('Respuesta vacía de la API')
-      }
-
+      if (data.text) setResponse(data.text)
+      else setError(data.error || 'api_error')
     } catch (err) {
       console.error(err)
-      setError('api_error')
+      setError('network')
     } finally {
       setLoading(false)
     }
@@ -86,7 +59,7 @@ function Advisor({ session, setPage }) {
       </div>
 
       {!response && !loading && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
           style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: 'clamp(20px, 6vw, 30px)', textAlign: 'center', border: '1px solid var(--border-light)' }}
         >
@@ -97,29 +70,15 @@ function Advisor({ session, setPage }) {
           <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.5', maxWidth: '400px', margin: '0 auto 24px' }}>
             Nuestro asesor inteligente leerá tus movimientos de este mes y te dará recomendaciones personalizadas para optimizar tus gastos.
           </p>
-          
-          {error === 'no_key' && (
-            <div style={{ background: 'rgba(216, 90, 48, 0.1)', padding: '12px', borderRadius: '8px', color: '#D85A30', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
-              <AlertCircle size={16} />
-              Falta la variable de entorno VITE_GEMINI_API_KEY en tu código.
+
+          {error && (
+            <div style={{ background: 'rgba(216, 90, 48, 0.1)', padding: '12px', borderRadius: '8px', color: '#D85A30', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '20px', textAlign: 'left' }}>
+              <AlertCircle size={16} style={{ flexShrink: 0 }} />
+              {errorMessages[error] || errorMessages.api_error}
             </div>
           )}
 
-          {error === 'no_data' && (
-            <div style={{ background: 'rgba(216, 90, 48, 0.1)', padding: '12px', borderRadius: '8px', color: '#D85A30', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
-              <AlertCircle size={16} />
-              No tienes movimientos este mes para analizar.
-            </div>
-          )}
-
-          {error === 'api_error' && (
-            <div style={{ background: 'rgba(216, 90, 48, 0.1)', padding: '12px', borderRadius: '8px', color: '#D85A30', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '20px' }}>
-              <AlertCircle size={16} />
-              Error al conectar con la IA. Revisa tu API Key.
-            </div>
-          )}
-
-          <button 
+          <button
             onClick={handleAnalyze}
             style={{
               padding: '12px 24px', borderRadius: '99px', border: 'none',
@@ -129,7 +88,7 @@ function Advisor({ session, setPage }) {
             }}
           >
             <Sparkles size={18} />
-            Generar análisis
+            {error ? 'Intentar de nuevo' : 'Generar análisis'}
           </button>
         </motion.div>
       )}
@@ -144,16 +103,16 @@ function Advisor({ session, setPage }) {
       )}
 
       {response && !loading && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
           style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: 'clamp(18px, 5vw, 30px)', border: '1px solid var(--border-light)' }}
         >
           <div className="markdown-body" style={{ color: 'var(--text-main)', fontSize: '15px', lineHeight: '1.6' }}>
             <ReactMarkdown>{response}</ReactMarkdown>
           </div>
-          
+
           <div style={{ marginTop: '30px', paddingTop: '20px', borderTop: '1px solid var(--border-dim)', textAlign: 'center' }}>
-            <button 
+            <button
               onClick={handleAnalyze}
               style={{
                 padding: '10px 20px', borderRadius: '8px', border: '1px solid var(--border-light)',
