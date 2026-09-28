@@ -3,6 +3,7 @@ import { supabase } from '../../supabaseClient'
 import { ArrowRightLeft } from 'lucide-react'
 import useIsMobile from '../../hooks/useIsMobile'
 import { defaultWallets, mergeWithDefaults } from '../../data/defaultWallets'
+import { todayLocal } from '../../utils/dates'
 
 const defaultWalletNames = defaultWallets.map(w => w.name)
 
@@ -39,7 +40,7 @@ function TransferForm({ session, onTransfer }) {
     if (from === to) return setError('Las billeteras deben ser diferentes')
 
     setSaving(true)
-    const date = new Date().toISOString().split('T')[0]
+    const date = todayLocal()
     const desc = description.trim() || 'Transferencia'
 
     const { data, error } = await supabase

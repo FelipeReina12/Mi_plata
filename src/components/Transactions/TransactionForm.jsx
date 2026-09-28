@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { supabase } from '../../supabaseClient'
 import useIsMobile from '../../hooks/useIsMobile'
 import { defaultWallets, mergeWithDefaults } from '../../data/defaultWallets'
+import { todayLocal } from '../../utils/dates'
 
 const categoryOptions = [
   'Comida', 'Transporte', 'Servicios', 'Entretenimiento', 'Salario', 'Otros ingresos', 'Otros'
@@ -40,7 +41,7 @@ function TransactionForm({ onAdd }) {
       type,
       category,
       wallet,
-      date:     new Date().toISOString().split('T')[0],
+      date:     todayLocal(),
     }
 
     onAdd(newTransaction)

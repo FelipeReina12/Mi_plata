@@ -8,6 +8,7 @@ import useIsMobile from '../../hooks/useIsMobile'
 import InitialBalanceSetup from '../Wallets/InitialBalanceSetup'
 import { mergeWithDefaults, replaceSaved } from '../../data/defaultWallets'
 import { balanceDelta } from '../../utils/balances'
+import { currentMonthLocal } from '../../utils/dates'
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
@@ -71,7 +72,7 @@ function Dashboard({ session, setPage }) {
   }
 
   // Filtrar movimientos del mes actual para métricas de mes
-  const currentMonthKey = new Date().toISOString().slice(0, 7)
+  const currentMonthKey = currentMonthLocal()
   const thisMonthTxs = transactions.filter(t => t.date && t.date.startsWith(currentMonthKey))
   const totalIncome  = thisMonthTxs.filter(t => t.type === 'income') .reduce((sum, t) => sum + t.amount, 0)
   const totalExpense = thisMonthTxs.filter(t => t.type === 'expense').reduce((sum, t) => sum + t.amount, 0)
