@@ -31,7 +31,7 @@ function BottomNav({ page, setPage }) {
     alignItems: 'center', justifyContent: 'center',
     padding: '8px 0 10px', cursor: 'pointer', minHeight: '56px',
     background: 'none', border: 'none',
-    color: active ? '#7F77DD' : 'var(--text-muted)',
+    color: active ? '#7C5CFF' : 'var(--text-muted)',
     fontSize: '11px', fontWeight: active ? '600' : '400', gap: '4px',
   })
 
@@ -67,8 +67,8 @@ function BottomNav({ page, setPage }) {
                   style={{
                     width: '100%', display: 'flex', alignItems: 'center', gap: '14px',
                     padding: '14px 12px', borderRadius: '10px', border: 'none', cursor: 'pointer',
-                    background: page === item.id ? 'rgba(127, 119, 221, 0.15)' : 'transparent',
-                    color: page === item.id ? '#7F77DD' : 'var(--text-main)',
+                    background: page === item.id ? 'rgba(124, 92, 255, 0.15)' : 'transparent',
+                    color: page === item.id ? '#7C5CFF' : 'var(--text-main)',
                     fontSize: '15px', fontWeight: page === item.id ? '600' : '500', textAlign: 'left',
                   }}>
                   <item.icon size={20} />

@@ -33,7 +33,7 @@ function ResetPassword() {
 
   return (
     <div style={{
-      minHeight: '100vh', background: 'var(--bg-app)',
+      minHeight: '100vh', background: 'transparent',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: '16px',
     }}>
@@ -44,8 +44,8 @@ function ResetPassword() {
       }}>
 
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '28px', justifyContent: 'center' }}>
-          <div style={{ background: '#EEEDFE', borderRadius: '10px', padding: '8px' }}>
-            <Wallet size={22} color="#7F77DD" />
+          <div style={{ background: 'rgba(124, 92, 255, 0.15)', borderRadius: '10px', padding: '8px' }}>
+            <Wallet size={22} color="#7C5CFF" />
           </div>
           <span style={{ fontWeight: '700', fontSize: '20px', color: 'var(--text-main)' }}>MiPlata</span>
         </div>
@@ -64,13 +64,13 @@ function ResetPassword() {
         </div>
 
         {error && (
-          <div style={{ background: '#FAECE7', color: '#712B13', fontSize: '12px', padding: '10px 12px', borderRadius: '8px', marginBottom: '16px' }}>
+          <div style={{ background: 'var(--error-bg)', color: 'var(--error-text)', fontSize: '12px', padding: '10px 12px', borderRadius: '8px', marginBottom: '16px' }}>
             {error}
           </div>
         )}
 
         {message && (
-          <div style={{ background: '#E1F5EE', color: '#085041', fontSize: '12px', padding: '10px 12px', borderRadius: '8px', marginBottom: '16px' }}>
+          <div style={{ background: 'var(--success-bg)', color: 'var(--success-text)', fontSize: '12px', padding: '10px 12px', borderRadius: '8px', marginBottom: '16px' }}>
             {message}
           </div>
         )}
@@ -80,7 +80,7 @@ function ResetPassword() {
           disabled={loading || !!message}
           style={{
             width: '100%', padding: '11px', borderRadius: '8px', border: 'none',
-            background: loading || message ? '#bbb' : '#7F77DD', color: '#fff',
+            background: loading || message ? '#bbb' : '#7C5CFF', color: '#fff',
             fontWeight: '600', fontSize: '14px', cursor: 'pointer',
           }}>
           {loading ? 'Guardando...' : 'Actualizar contraseña'}

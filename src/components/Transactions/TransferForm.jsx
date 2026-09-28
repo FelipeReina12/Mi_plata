@@ -91,7 +91,7 @@ function TransferForm({ session, onTransfer }) {
   return (
     <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px', marginBottom: '20px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-        <ArrowRightLeft size={16} color="#7F77DD" />
+        <ArrowRightLeft size={16} color="#7C5CFF" />
         <h3 style={{ fontSize: '14px', color: 'var(--text-main)', fontWeight: '600' }}>Transferencia entre billeteras</h3>
       </div>
 
@@ -103,7 +103,7 @@ function TransferForm({ session, onTransfer }) {
             {walletNames.map(w => <option key={w}>{w}</option>)}
           </select>
         </div>
-        <div style={{ textAlign: 'center', color: '#7F77DD', marginTop: isMobile ? '4px' : '18px' }}>
+        <div style={{ textAlign: 'center', color: '#7C5CFF', marginTop: isMobile ? '4px' : '18px' }}>
           <ArrowRightLeft size={18} style={{ transform: isMobile ? 'rotate(90deg)' : 'none' }} />
         </div>
         <div>
@@ -139,7 +139,7 @@ function TransferForm({ session, onTransfer }) {
       </div>
 
       {error && (
-        <div style={{ background: '#FAECE7', color: '#712B13', fontSize: '12px', padding: '10px 12px', borderRadius: '8px', marginBottom: '12px' }}>
+        <div style={{ background: 'var(--error-bg)', color: 'var(--error-text)', fontSize: '12px', padding: '10px 12px', borderRadius: '8px', marginBottom: '12px' }}>
           {error}
         </div>
       )}
@@ -149,7 +149,7 @@ function TransferForm({ session, onTransfer }) {
         disabled={saving}
         style={{
           width: '100%', padding: '10px', borderRadius: '8px', border: 'none',
-          background: saving ? '#bbb' : '#7F77DD', color: '#fff',
+          background: saving ? '#bbb' : '#7C5CFF', color: '#fff',
           fontWeight: '600', fontSize: '14px', cursor: saving ? 'default' : 'pointer',
           display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
         }}>

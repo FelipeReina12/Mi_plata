@@ -114,7 +114,7 @@ function Subscriptions({ session }) {
           style={{
             display: 'flex', alignItems: 'center', gap: '6px',
             padding: '8px 14px', borderRadius: '8px', border: 'none',
-            background: '#7F77DD', color: '#fff', fontSize: '13px',
+            background: '#7C5CFF', color: '#fff', fontSize: '13px',
             fontWeight: '500', cursor: 'pointer',
           }}>
           <Plus size={15} /> Nuevo
@@ -160,7 +160,7 @@ function Subscriptions({ session }) {
                 <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
                   Cancelar
                 </button>
-                <button onClick={handleAddSubscription} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+                <button onClick={handleAddSubscription} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7C5CFF', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
                   {saving ? 'Guardando...' : 'Guardar'}
                 </button>
               </div>
@@ -170,8 +170,8 @@ function Subscriptions({ session }) {
       </AnimatePresence>
 
       <div style={{ display: 'flex', alignItems: 'center', gap: '10px', background: 'var(--bg-card)', padding: '16px 20px', borderRadius: '12px', border: '1px solid var(--border-light)', marginBottom: '20px' }}>
-        <div style={{ background: 'rgba(216, 90, 48, 0.1)', padding: '10px', borderRadius: '10px' }}>
-          <Repeat size={20} color="#D85A30" />
+        <div style={{ background: 'rgba(244, 63, 94, 0.1)', padding: '10px', borderRadius: '10px' }}>
+          <Repeat size={20} color="#F43F5E" />
         </div>
         <div>
           <div style={{ fontSize: '12px', color: 'var(--text-muted)', marginBottom: '2px' }}>Total en fijos (Mensual)</div>
@@ -202,11 +202,11 @@ function Subscriptions({ session }) {
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end' }}>
                   <div>
                     <div style={{ fontSize: '12px', color: 'var(--text-light)', marginBottom: '2px' }}>{s.category}</div>
-                    <div style={{ fontSize: '12px', color: isUrgent ? '#D85A30' : 'var(--text-muted)', fontWeight: isUrgent ? '600' : '400' }}>
+                    <div style={{ fontSize: '12px', color: isUrgent ? '#F43F5E' : 'var(--text-muted)', fontWeight: isUrgent ? '600' : '400' }}>
                       {daysLeft === 0 ? 'Hoy' : `Faltan ${daysLeft} días`}
                     </div>
                   </div>
-                  <div style={{ fontWeight: '600', color: '#D85A30', fontSize: '14px' }}>
+                  <div style={{ fontWeight: '600', color: '#F43F5E', fontSize: '14px' }}>
                     -{formatCOP(s.amount)}
                   </div>
                 </div>

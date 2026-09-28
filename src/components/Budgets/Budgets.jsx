@@ -92,7 +92,7 @@ function Budgets({ session }) {
           style={{
             display: 'flex', alignItems: 'center', gap: '6px',
             padding: '8px 14px', borderRadius: '8px', border: 'none',
-            background: '#7F77DD', color: '#fff', fontSize: '13px',
+            background: '#7C5CFF', color: '#fff', fontSize: '13px',
             fontWeight: '500', cursor: 'pointer',
           }}>
           <Plus size={15} /> Nuevo presupuesto
@@ -127,7 +127,7 @@ function Budgets({ session }) {
                 <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
                   Cancelar
                 </button>
-                <button onClick={handleAddBudget} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+                <button onClick={handleAddBudget} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7C5CFF', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
                   {saving ? 'Guardando...' : 'Guardar presupuesto'}
                 </button>
               </div>
@@ -147,7 +147,7 @@ function Budgets({ session }) {
             const spent   = spentByCategory[b.category] || 0
             const pct     = Math.min(Math.round((spent / b.amount) * 100), 100)
             const over    = spent > b.amount
-            const barColor = over ? '#D85A30' : pct > 75 ? '#EF9F27' : '#1D9E75'
+            const barColor = over ? '#F43F5E' : pct > 75 ? '#F59E0B' : '#0FA971'
 
             return (
               <div key={b.id} style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '18px 20px' }}>
@@ -159,10 +159,10 @@ function Budgets({ session }) {
                 </div>
 
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '6px', fontSize: '12px' }}>
-                  <span style={{ color: over ? '#D85A30' : 'var(--text-light)' }}>
+                  <span style={{ color: over ? '#F43F5E' : 'var(--text-light)' }}>
                     {formatCOP(spent)} de {formatCOP(b.amount)}
                   </span>
-                  <span style={{ color: over ? '#D85A30' : 'var(--text-muted)', fontWeight: '500' }}>
+                  <span style={{ color: over ? '#F43F5E' : 'var(--text-muted)', fontWeight: '500' }}>
                     {pct}%{over ? ' — ¡excedido!' : ''}
                   </span>
                 </div>

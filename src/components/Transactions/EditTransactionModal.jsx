@@ -34,7 +34,7 @@ async function updateTransaction(id, changes) {
 
 function ErrorBox({ children }) {
   return (
-    <div style={{ background: '#FAECE7', color: '#712B13', fontSize: '12px', padding: '8px 10px', borderRadius: '8px', marginTop: '12px' }}>
+    <div style={{ background: 'var(--error-bg)', color: 'var(--error-text)', fontSize: '12px', padding: '8px 10px', borderRadius: '8px', marginTop: '12px' }}>
       {children}
     </div>
   )
@@ -52,7 +52,7 @@ function Buttons({ saving, onClose, onSave }) {
       <button
         onClick={onSave}
         disabled={saving}
-        style={{ flex: 2, padding: '10px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
+        style={{ flex: 2, padding: '10px', borderRadius: '8px', border: 'none', background: '#7C5CFF', color: '#fff', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
         {saving ? 'Guardando...' : 'Guardar cambios'}
       </button>
     </div>
@@ -96,8 +96,8 @@ function IncomeExpenseForm({ transaction, walletNames, onClose, onSaved }) {
       <h3 style={titleStyle}>Editar movimiento</h3>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-        <button style={typeBtn(type === 'income', '#1D9E75')} onClick={() => setType('income')}>↓ Ingreso</button>
-        <button style={typeBtn(type === 'expense', '#D85A30')} onClick={() => setType('expense')}>↑ Gasto</button>
+        <button style={typeBtn(type === 'income', '#0FA971')} onClick={() => setType('income')}>↓ Ingreso</button>
+        <button style={typeBtn(type === 'expense', '#F43F5E')} onClick={() => setType('expense')}>↑ Gasto</button>
       </div>
 
       <div style={{ marginBottom: '10px' }}>
@@ -185,7 +185,7 @@ function TransferEditForm({ transaction, partner, walletNames, onClose, onSaved 
           {withCurrent(walletNames, from).map(w => <option key={w}>{w}</option>)}
         </select>
       </div>
-      <div style={{ textAlign: 'center', color: '#7F77DD', margin: '4px 0' }}>
+      <div style={{ textAlign: 'center', color: '#7C5CFF', margin: '4px 0' }}>
         <ArrowRightLeft size={18} style={{ transform: 'rotate(90deg)' }} />
       </div>
       <div style={{ marginBottom: '10px' }}>
@@ -258,7 +258,7 @@ function EditTransactionModal({ transaction, partner, walletNames, onClose, onSa
             </p>
             <button
               onClick={onClose}
-              style={{ width: '100%', marginTop: '18px', padding: '10px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
+              style={{ width: '100%', marginTop: '18px', padding: '10px', borderRadius: '8px', border: 'none', background: '#7C5CFF', color: '#fff', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
               Entendido
             </button>
           </>

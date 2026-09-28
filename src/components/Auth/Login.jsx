@@ -45,7 +45,7 @@ function Login() {
 
   return (
     <div style={{
-      minHeight: '100vh', background: 'var(--bg-app)',
+      minHeight: '100vh', background: 'transparent',
       display: 'flex', alignItems: 'center', justifyContent: 'center',
       padding: '16px',
     }}>
@@ -57,8 +57,8 @@ function Login() {
 
         {/* Logo */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '28px', justifyContent: 'center' }}>
-          <div style={{ background: '#EEEDFE', borderRadius: '10px', padding: '8px' }}>
-            <Wallet size={22} color="#7F77DD" />
+          <div style={{ background: 'rgba(124, 92, 255, 0.15)', borderRadius: '10px', padding: '8px' }}>
+            <Wallet size={22} color="#7C5CFF" />
           </div>
           <span style={{ fontWeight: '700', fontSize: '20px', color: 'var(--text-main)' }}>MiPlata</span>
         </div>
@@ -105,7 +105,7 @@ function Login() {
           <div style={{ textAlign: 'right', marginBottom: '16px' }}>
             <span
               onClick={() => { setMode('forgot'); setError(''); setMessage('') }}
-              style={{ fontSize: '12px', color: '#7F77DD', cursor: 'pointer' }}>
+              style={{ fontSize: '12px', color: '#7C5CFF', cursor: 'pointer' }}>
               ¿Olvidaste tu contraseña?
             </span>
           </div>
@@ -113,14 +113,14 @@ function Login() {
 
         {/* Error */}
         {error && (
-          <div style={{ background: '#FAECE7', color: '#712B13', fontSize: '12px', padding: '10px 12px', borderRadius: '8px', marginBottom: '16px' }}>
+          <div style={{ background: 'var(--error-bg)', color: 'var(--error-text)', fontSize: '12px', padding: '10px 12px', borderRadius: '8px', marginBottom: '16px' }}>
             {error}
           </div>
         )}
 
         {/* Mensaje de éxito */}
         {message && (
-          <div style={{ background: '#E1F5EE', color: '#085041', fontSize: '12px', padding: '10px 12px', borderRadius: '8px', marginBottom: '16px' }}>
+          <div style={{ background: 'var(--success-bg)', color: 'var(--success-text)', fontSize: '12px', padding: '10px 12px', borderRadius: '8px', marginBottom: '16px' }}>
             {message}
           </div>
         )}
@@ -131,7 +131,7 @@ function Login() {
           disabled={loading}
           style={{
             width: '100%', padding: '11px', borderRadius: '8px', border: 'none',
-            background: loading ? '#bbb' : '#7F77DD', color: '#fff',
+            background: loading ? '#bbb' : '#7C5CFF', color: '#fff',
             fontWeight: '600', fontSize: '14px', cursor: loading ? 'default' : 'pointer',
           }}>
           {loading ? 'Cargando...' :
@@ -143,18 +143,18 @@ function Login() {
         {/* Cambiar modo */}
         <p style={{ textAlign: 'center', fontSize: '13px', color: 'var(--text-muted)', marginTop: '20px' }}>
           {mode === 'forgot' ? (
-            <span onClick={() => { setMode('login'); setError(''); setMessage('') }} style={{ color: '#7F77DD', cursor: 'pointer', fontWeight: '500' }}>
+            <span onClick={() => { setMode('login'); setError(''); setMessage('') }} style={{ color: '#7C5CFF', cursor: 'pointer', fontWeight: '500' }}>
               Volver al inicio de sesión
             </span>
           ) : mode === 'login' ? (
             <>¿No tienes cuenta?{' '}
-              <span onClick={() => { setMode('register'); setError(''); setMessage('') }} style={{ color: '#7F77DD', cursor: 'pointer', fontWeight: '500' }}>
+              <span onClick={() => { setMode('register'); setError(''); setMessage('') }} style={{ color: '#7C5CFF', cursor: 'pointer', fontWeight: '500' }}>
                 Regístrate
               </span>
             </>
           ) : (
             <>¿Ya tienes cuenta?{' '}
-              <span onClick={() => { setMode('login'); setError(''); setMessage('') }} style={{ color: '#7F77DD', cursor: 'pointer', fontWeight: '500' }}>
+              <span onClick={() => { setMode('login'); setError(''); setMessage('') }} style={{ color: '#7C5CFF', cursor: 'pointer', fontWeight: '500' }}>
                 Inicia sesión
               </span>
             </>

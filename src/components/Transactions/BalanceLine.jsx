@@ -9,7 +9,7 @@ function BalanceLine({ balance, label = 'Saldo', showTotal = false }) {
   if (!balance) return null
 
   const strong = value => (
-    <span style={{ fontWeight: '600', color: value < 0 ? '#D85A30' : 'var(--text-muted)' }}>
+    <span style={{ fontWeight: '600', color: value < 0 ? '#F43F5E' : 'var(--text-muted)' }}>
       {formatCOP(value)}
     </span>
   )

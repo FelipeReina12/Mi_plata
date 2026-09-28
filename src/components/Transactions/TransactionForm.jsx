@@ -65,10 +65,10 @@ function TransactionForm({ onAdd }) {
       <h3 style={{ marginBottom: '16px', fontSize: '14px', color: 'var(--text-main)' }}>Registrar movimiento</h3>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-        <button style={btnStyle(type === 'income',  '#1D9E75')} onClick={() => setType('income')}>
+        <button style={btnStyle(type === 'income',  '#0FA971')} onClick={() => setType('income')}>
           ↓ Ingreso
         </button>
-        <button style={btnStyle(type === 'expense', '#D85A30')} onClick={() => setType('expense')}>
+        <button style={btnStyle(type === 'expense', '#F43F5E')} onClick={() => setType('expense')}>
           ↑ Gasto
         </button>
       </div>
@@ -113,7 +113,7 @@ function TransactionForm({ onAdd }) {
         onClick={handleSubmit}
         style={{
           width: '100%', padding: '10px', borderRadius: '8px', border: 'none',
-          background: '#7F77DD', color: '#fff', fontWeight: '600',
+          background: '#7C5CFF', color: '#fff', fontWeight: '600',
           fontSize: '14px', cursor: 'pointer',
         }}>
         Guardar movimiento

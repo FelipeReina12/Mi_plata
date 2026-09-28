@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Wallet } from 'lucide-react'
 import { supabase } from '../../supabaseClient'
 import { balanceDelta } from '../../utils/balances'
+import { walletColor, walletTint } from '../../data/defaultWallets'
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
@@ -67,7 +68,7 @@ function InitialBalanceSetup({ session, wallets, transactions, onSaved }) {
   }
 
   return (
-    <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid #7F77DD', padding: '20px', marginBottom: '20px' }}>
+    <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid #7C5CFF', padding: '20px', marginBottom: '20px' }}>
       <h3 style={{ fontSize: '14px', fontWeight: '600', color: 'var(--text-main)', marginBottom: '6px' }}>
         ¿Cuánto tienes hoy en cada billetera?
       </h3>
@@ -78,8 +79,8 @@ function InitialBalanceSetup({ session, wallets, transactions, onSaved }) {
 
       {pending.map(w => (
         <div key={w.name} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', textAlign: 'left' }}>
-          <div style={{ width: '32px', height: '32px', borderRadius: '9px', background: w.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Wallet size={16} color={w.color} />
+          <div style={{ width: '32px', height: '32px', borderRadius: '9px', background: walletTint(w.color), display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <Wallet size={16} color={walletColor(w.color)} />
           </div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)' }}>{w.name}</div>
@@ -100,7 +101,7 @@ function InitialBalanceSetup({ session, wallets, transactions, onSaved }) {
       ))}
 
       {error && (
-        <div style={{ background: '#FAECE7', color: '#712B13', fontSize: '12px', padding: '8px 10px', borderRadius: '8px', marginBottom: '10px' }}>
+        <div style={{ background: 'var(--error-bg)', color: 'var(--error-text)', fontSize: '12px', padding: '8px 10px', borderRadius: '8px', marginBottom: '10px' }}>
           {error}
         </div>
       )}
@@ -115,7 +116,7 @@ function InitialBalanceSetup({ session, wallets, transactions, onSaved }) {
         <button
           onClick={() => save(false)}
           disabled={saving}
-          style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+          style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7C5CFF', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
           {saving ? 'Guardando...' : 'Guardar saldos'}
         </button>
       </div>

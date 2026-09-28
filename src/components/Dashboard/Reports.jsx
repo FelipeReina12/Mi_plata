@@ -3,7 +3,7 @@ import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, Tooltip, Legend, Resp
 import { supabase } from '../../supabaseClient'
 import useIsMobile from '../../hooks/useIsMobile'
 
-const COLORS = ['#D85A30','#7F77DD','#EF9F27','#185FA5','#1D9E75','#888780']
+const COLORS = ['#F43F5E','#7C5CFF','#F59E0B','#3B82F6','#0FA971','#8B8FA8']
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
@@ -67,9 +67,9 @@ function Reports() {
         gap: isMobile ? '10px' : '14px', marginBottom: isMobile ? '20px' : '24px'
       }}>
         {[
-          { label: 'Saldo neto',     value: formatCOP(totalIncome - totalExpense), color: '#1D9E75', wide: true },
+          { label: 'Saldo neto',     value: formatCOP(totalIncome - totalExpense), color: '#0FA971', wide: true },
           { label: 'Total ingresos', value: formatCOP(totalIncome),                color: 'var(--text-main)' },
-          { label: 'Total gastos',   value: formatCOP(totalExpense),               color: '#D85A30' },
+          { label: 'Total gastos',   value: formatCOP(totalExpense),               color: '#F43F5E' },
         ].map(c => (
           <div key={c.label} style={{
             background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)',
@@ -113,8 +113,8 @@ function Reports() {
                   <YAxis tick={{ fontSize: 11 }} tickFormatter={formatShort} width={isMobile ? 52 : 60} />
                   <Tooltip formatter={(v) => formatCOP(v)} labelFormatter={formatMonth} />
                   <Legend wrapperStyle={{ fontSize: '12px' }} />
-                  <Bar dataKey="ingresos" fill="#1D9E75" radius={[4,4,0,0]} />
-                  <Bar dataKey="gastos"   fill="#D85A30" radius={[4,4,0,0]} />
+                  <Bar dataKey="ingresos" fill="#0FA971" radius={[4,4,0,0]} />
+                  <Bar dataKey="gastos"   fill="#F43F5E" radius={[4,4,0,0]} />
                 </BarChart>
               </ResponsiveContainer>
           }

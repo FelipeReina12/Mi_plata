@@ -54,7 +54,7 @@ function Advisor() {
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '24px' }}>
-        <Sparkles color="#7F77DD" size={24} />
+        <Sparkles color="#7C5CFF" size={24} />
         <h2 style={{ color: 'var(--text-main)', fontWeight: '600' }}>Asesor IA</h2>
       </div>
 
@@ -63,8 +63,8 @@ function Advisor() {
           initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
           style={{ background: 'var(--bg-card)', borderRadius: '16px', padding: 'clamp(20px, 6vw, 30px)', textAlign: 'center', border: '1px solid var(--border-light)' }}
         >
-          <div style={{ background: 'rgba(127, 119, 221, 0.1)', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-            <Sparkles color="#7F77DD" size={30} />
+          <div style={{ background: 'rgba(124, 92, 255, 0.1)', width: '60px', height: '60px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <Sparkles color="#7C5CFF" size={30} />
           </div>
           <h3 style={{ fontSize: '18px', color: 'var(--text-main)', marginBottom: '10px' }}>Analiza tus finanzas con IA</h3>
           <p style={{ color: 'var(--text-muted)', fontSize: '14px', lineHeight: '1.5', maxWidth: '400px', margin: '0 auto 24px' }}>
@@ -72,7 +72,7 @@ function Advisor() {
           </p>
 
           {error && (
-            <div style={{ background: 'rgba(216, 90, 48, 0.1)', padding: '12px', borderRadius: '8px', color: '#D85A30', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '20px', textAlign: 'left' }}>
+            <div style={{ background: 'rgba(244, 63, 94, 0.1)', padding: '12px', borderRadius: '8px', color: '#F43F5E', fontSize: '13px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '20px', textAlign: 'left' }}>
               <AlertCircle size={16} style={{ flexShrink: 0 }} />
               {errorMessages[error] || errorMessages.api_error}
             </div>
@@ -82,9 +82,9 @@ function Advisor() {
             onClick={handleAnalyze}
             style={{
               padding: '12px 24px', borderRadius: '99px', border: 'none',
-              background: '#7F77DD', color: '#fff', fontSize: '15px', fontWeight: '600',
+              background: '#7C5CFF', color: '#fff', fontSize: '15px', fontWeight: '600',
               cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px',
-              boxShadow: '0 4px 14px rgba(127, 119, 221, 0.3)'
+              boxShadow: '0 4px 14px rgba(124, 92, 255, 0.3)'
             }}
           >
             <Sparkles size={18} />
@@ -96,7 +96,7 @@ function Advisor() {
       {loading && (
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '60px 0' }}>
           <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}>
-            <Loader2 size={32} color="#7F77DD" />
+            <Loader2 size={32} color="#7C5CFF" />
           </motion.div>
           <p style={{ color: 'var(--text-muted)', marginTop: '16px', fontSize: '14px' }}>La IA está analizando tus finanzas...</p>
         </div>

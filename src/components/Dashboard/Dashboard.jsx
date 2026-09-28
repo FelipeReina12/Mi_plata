@@ -115,8 +115,8 @@ function Dashboard({ session, setPage }) {
         <div style={{ gridColumn: isMobile ? '1 / -1' : 'auto' }}>
           <MetricCard label="Saldo total" value={formatCOP(totalBalance)} sub="Todas las cuentas" color="var(--text-main)" />
         </div>
-        <MetricCard label="Ingresos" value={formatCOP(totalIncome)}  sub="Este mes" color="#1D9E75" compact={isMobile} />
-        <MetricCard label="Gastos"   value={formatCOP(totalExpense)} sub="Este mes" color="#D85A30" compact={isMobile} />
+        <MetricCard label="Ingresos" value={formatCOP(totalIncome)}  sub="Este mes" color="#0FA971" compact={isMobile} />
+        <MetricCard label="Gastos"   value={formatCOP(totalExpense)} sub="Este mes" color="#F43F5E" compact={isMobile} />
       </motion.div>
 
       <TransactionForm onAdd={handleAdd} />
@@ -127,7 +127,7 @@ function Dashboard({ session, setPage }) {
         <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px', marginBottom: '20px' }}>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h3 style={{ fontSize: '14px', color: 'var(--text-main)', fontWeight: '600' }}>Próximos pagos fijos (7 días)</h3>
-            <button onClick={() => setPage && setPage('subscriptions')} style={{ background: 'none', border: 'none', color: '#7F77DD', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+            <button onClick={() => setPage && setPage('subscriptions')} style={{ background: 'none', border: 'none', color: '#7C5CFF', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
               Ver todas
             </button>
           </div>
@@ -136,10 +136,10 @@ function Dashboard({ session, setPage }) {
             {subscriptions.map(s => (
               <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--bg-input)', padding: '10px 14px', borderRadius: '8px' }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#D85A30' }} />
+                  <div style={{ width: '8px', height: '8px', borderRadius: '50%', background: '#F43F5E' }} />
                   <span style={{ fontSize: '13px', fontWeight: '500', color: 'var(--text-main)' }}>{s.name}</span>
                 </div>
-                <span style={{ fontSize: '13px', fontWeight: '600', color: '#D85A30' }}>-{formatCOP(s.amount)}</span>
+                <span style={{ fontSize: '13px', fontWeight: '600', color: '#F43F5E' }}>-{formatCOP(s.amount)}</span>
               </div>
             ))}
           </div>
@@ -166,10 +166,10 @@ function Dashboard({ session, setPage }) {
           >
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: 1, minWidth: 0 }}>
               {t.type === 'transfer'
-                ? <span style={{ color: '#7F77DD', fontSize: '16px', flexShrink: 0 }}>⇄</span>
+                ? <span style={{ color: '#7C5CFF', fontSize: '16px', flexShrink: 0 }}>⇄</span>
                 : <div style={{
                     width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0,
-                    background: t.type === 'income' ? '#1D9E75' : '#D85A30',
+                    background: t.type === 'income' ? '#0FA971' : '#F43F5E',
                   }} />
               }
               <div style={{ minWidth: 0 }}>
@@ -179,7 +179,7 @@ function Dashboard({ session, setPage }) {
             </div>
             <div style={{
               fontSize: '13px', fontWeight: '600', flexShrink: 0, marginLeft: '10px',
-              color: t.type === 'transfer' ? '#7F77DD' : t.type === 'income' ? '#1D9E75' : '#D85A30',
+              color: t.type === 'transfer' ? '#7C5CFF' : t.type === 'income' ? '#0FA971' : '#F43F5E',
             }}>
               {t.type === 'transfer' ? (t.description.includes('→') || t.description.includes('->') ? '-' : '+') : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
             </div>

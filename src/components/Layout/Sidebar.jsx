@@ -26,8 +26,8 @@ function Sidebar({ page, setPage }) {
 
       {/* Logo */}
       <div style={{ padding: '0 18px 24px', display: 'flex', alignItems: 'center', gap: '8px' }}>
-        <div style={{ background: page === 'settings' ? 'rgba(127, 119, 221, 0.2)' : '#EEEDFE', borderRadius: '8px', padding: '6px' }}>
-          <Wallet size={18} color="#7F77DD" />
+        <div style={{ background: page === 'settings' ? 'rgba(124, 92, 255, 0.2)' : 'rgba(124, 92, 255, 0.15)', borderRadius: '8px', padding: '6px' }}>
+          <Wallet size={18} color="#7C5CFF" />
         </div>
         <span style={{ fontWeight: '600', fontSize: '16px', color: 'var(--text-main)' }}>MiPlata</span>
       </div>
@@ -40,9 +40,9 @@ function Sidebar({ page, setPage }) {
           gap: '10px',
           padding: '10px 18px',
           cursor: 'pointer',
-          borderLeft: page === item.id ? '2px solid #7F77DD' : '2px solid transparent',
-          background:  page === item.id ? 'rgba(127, 119, 221, 0.15)' : 'transparent',
-          color:       page === item.id ? '#7F77DD' : 'var(--text-muted)',
+          borderLeft: page === item.id ? '2px solid #7C5CFF' : '2px solid transparent',
+          background:  page === item.id ? 'rgba(124, 92, 255, 0.15)' : 'transparent',
+          color:       page === item.id ? '#7C5CFF' : 'var(--text-muted)',
           fontSize: '13px',
           fontWeight:  page === item.id ? '500' : '400',
         }}>

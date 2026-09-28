@@ -20,7 +20,7 @@ function Settings({ darkMode, setDarkMode }) {
             onClick={() => setDarkMode(!darkMode)}
             style={{
               padding: '8px 12px', borderRadius: '8px', border: '1px solid var(--border-light)',
-              background: 'var(--bg-app)', color: 'var(--text-main)', cursor: 'pointer',
+              background: 'var(--bg-input)', color: 'var(--text-main)', cursor: 'pointer',
               display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: '500'
             }}>
             {darkMode ? <Sun size={16} /> : <Moon size={16} />}
@@ -41,7 +41,7 @@ function Settings({ darkMode, setDarkMode }) {
             onClick={() => supabase.auth.signOut()}
             style={{
               padding: '8px 12px', borderRadius: '8px', border: 'none',
-              background: '#D85A30', color: '#fff', cursor: 'pointer',
+              background: '#F43F5E', color: '#fff', cursor: 'pointer',
               display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px', fontWeight: '500'
             }}>
             <LogOut size={16} />

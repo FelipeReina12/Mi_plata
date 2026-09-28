@@ -95,7 +95,7 @@ function Movements() {
   const btnFilter = (active) => ({
     padding: '7px 14px', borderRadius: '8px',
     fontSize: '13px', cursor: 'pointer', fontWeight: '500',
-    background: active ? '#7F77DD' : 'var(--bg-input)',
+    background: active ? '#7C5CFF' : 'var(--bg-input)',
     color:      active ? '#fff'    : 'var(--text-muted)',
     border:     active ? '1px solid transparent' : '1px solid var(--border-light)',
   })
@@ -185,10 +185,10 @@ function Movements() {
 
             {/* Indicador tipo */}
             {t.type === 'transfer'
-              ? <ArrowRightLeft size={14} color="#7F77DD" style={{ flexShrink: 0 }} />
+              ? <ArrowRightLeft size={14} color="#7C5CFF" style={{ flexShrink: 0 }} />
               : <div style={{
                   width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0,
-                  background: t.type === 'income' ? '#1D9E75' : '#D85A30',
+                  background: t.type === 'income' ? '#0FA971' : '#F43F5E',
                 }} />
             }
 
@@ -205,7 +205,7 @@ function Movements() {
             {/* Monto */}
             <div style={{
               fontSize: '13px', fontWeight: '600', flexShrink: 0,
-              color: t.type === 'transfer' ? '#7F77DD' : t.type === 'income' ? '#1D9E75' : '#D85A30',
+              color: t.type === 'transfer' ? '#7C5CFF' : t.type === 'income' ? '#0FA971' : '#F43F5E',
             }}>
               {t.type === 'transfer' ? (t.description.includes('→') || t.description.includes('->') ? '-' : '+') : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
             </div>
@@ -219,7 +219,7 @@ function Movements() {
                 color: 'var(--text-lighter)', padding: '8px', margin: '-4px', borderRadius: '6px',
                 display: 'flex', alignItems: 'center', flexShrink: 0,
               }}
-              onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}
+              onMouseEnter={e => e.currentTarget.style.color = '#F43F5E'}
               onMouseLeave={e => e.currentTarget.style.color = 'var(--text-lighter)'}
             >
               <Trash2 size={15} />

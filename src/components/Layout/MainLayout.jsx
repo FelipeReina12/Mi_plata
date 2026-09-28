@@ -14,7 +14,7 @@ function MainLayout({ children, page, setPage }) {
         padding: isMobile ? '16px' : '24px',
         paddingTop: isMobile ? 'calc(16px + env(safe-area-inset-top))' : '24px',
         paddingBottom: isMobile ? 'calc(88px + env(safe-area-inset-bottom))' : '24px',
-        background: 'var(--bg-app)',
+        background: 'transparent',
         minHeight: '100vh',
       }}>
         {children}

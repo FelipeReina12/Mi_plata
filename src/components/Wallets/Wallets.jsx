@@ -8,19 +8,19 @@ import { walletBalances, initialBalancesByName, transferPartners, parseTransfer 
 import useIsMobile from '../../hooks/useIsMobile'
 import { byDateDesc } from '../../utils/dates'
 import InitialBalanceSetup from './InitialBalanceSetup'
-import { mergeWithDefaults, replaceSaved } from '../../data/defaultWallets'
+import { mergeWithDefaults, replaceSaved, walletColor, walletTint } from '../../data/defaultWallets'
 
 function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
 }
 
 const colorOptions = [
-  { color: '#888780', bg: '#F1EFE8' },
-  { color: '#1D9E75', bg: '#E1F5EE' },
-  { color: '#185FA5', bg: '#E6F1FB' },
-  { color: '#D85A30', bg: '#FAECE7' },
-  { color: '#7F77DD', bg: '#EEEDFE' },
-  { color: '#EF9F27', bg: '#FAEEDA' },
+  { color: '#8B8FA8', bg: '#8B8FA826' },
+  { color: '#0FA971', bg: '#0FA97126' },
+  { color: '#3B82F6', bg: '#3B82F626' },
+  { color: '#F43F5E', bg: '#F43F5E26' },
+  { color: '#7C5CFF', bg: '#7C5CFF26' },
+  { color: '#F59E0B', bg: '#F59E0B26' },
 ]
 
 function Wallets({ session }) {
@@ -210,7 +210,7 @@ function Wallets({ session }) {
             style={{
               display: 'flex', alignItems: 'center', gap: '6px',
               padding: '8px 14px', borderRadius: '8px', border: '1px solid var(--border-light)',
-              background: showTransfer ? '#7F77DD' : 'var(--bg-card)',
+              background: showTransfer ? '#7C5CFF' : 'var(--bg-card)',
               color: showTransfer ? '#fff' : 'var(--text-main)',
               fontSize: '13px', fontWeight: '500', cursor: 'pointer',
             }}>
@@ -221,7 +221,7 @@ function Wallets({ session }) {
             style={{
               display: 'flex', alignItems: 'center', gap: '6px',
               padding: '8px 14px', borderRadius: '8px', border: 'none',
-              background: '#7F77DD', color: '#fff', fontSize: '13px',
+              background: '#7C5CFF', color: '#fff', fontSize: '13px',
               fontWeight: '500', cursor: 'pointer',
             }}>
             <Plus size={15} /> Nueva billetera
@@ -274,7 +274,7 @@ function Wallets({ session }) {
                 </div>
               </div>
               {formError && (
-                <div style={{ background: '#FAECE7', color: '#712B13', fontSize: '12px', padding: '8px 10px', borderRadius: '8px', marginBottom: '12px' }}>
+                <div style={{ background: 'var(--error-bg)', color: 'var(--error-text)', fontSize: '12px', padding: '8px 10px', borderRadius: '8px', marginBottom: '12px' }}>
                   {formError}
                 </div>
               )}
@@ -282,7 +282,7 @@ function Wallets({ session }) {
                 <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
                   Cancelar
                 </button>
-                <button onClick={handleAddWallet} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7F77DD', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+                <button onClick={handleAddWallet} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7C5CFF', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
                   {saving ? 'Guardando...' : 'Guardar billetera'}
                 </button>
               </div>
@@ -302,7 +302,7 @@ function Wallets({ session }) {
       )}
 
       {/* Saldo total */}
-      <div style={{ background: '#7F77DD', borderRadius: '16px', padding: '24px 28px', marginBottom: '24px', color: '#fff' }}>
+      <div style={{ background: 'linear-gradient(135deg, #7C5CFF 0%, #5B6CFF 55%, #38BDF8 100%)', borderRadius: '20px', padding: '24px 28px', marginBottom: '24px', color: '#fff', boxShadow: '0 12px 32px rgba(124, 92, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35)' }}>
         <div style={{ fontSize: '12px', opacity: 0.8, marginBottom: '8px', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Saldo total</div>
         <div style={{ fontSize: '32px', fontWeight: '700' }}>{formatCOP(totalBalance)}</div>
         <div style={{ fontSize: '12px', opacity: 0.7, marginTop: '6px' }}>{walletsWithBalance.length} billeteras</div>
@@ -322,8 +322,8 @@ function Wallets({ session }) {
 
                 {/* Header */}
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '16px' }}>
-                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: w.bg, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                    <Wallet size={18} color={w.color} />
+                  <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: walletTint(w.color), display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <Wallet size={18} color={walletColor(w.color)} />
                   </div>
                   <span style={{ fontWeight: '600', fontSize: '15px', color: 'var(--text-main)', flex: 1, minWidth: 0, textAlign: 'left' }}>{w.name}</span>
                   {walletsWithBalance.length > 1 && (
@@ -331,7 +331,7 @@ function Wallets({ session }) {
                       onClick={() => { setToDelete(w); setDeleteError('') }}
                       aria-label={`Eliminar ${w.name}`}
                       style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '8px', margin: '-8px', display: 'flex', flexShrink: 0 }}
-                      onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}
+                      onMouseEnter={e => e.currentTarget.style.color = '#F43F5E'}
                       onMouseLeave={e => e.currentTarget.style.color = 'var(--text-lighter)'}
                     >
                       <Trash2 size={16} />
@@ -342,7 +342,7 @@ function Wallets({ session }) {
                 {/* Saldo */}
                 <div style={{ marginBottom: '16px' }}>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Saldo</div>
-                  <div style={{ fontSize: '22px', fontWeight: '700', color: w.balance >= 0 ? 'var(--text-main)' : '#D85A30' }}>
+                  <div style={{ fontSize: '22px', fontWeight: '700', color: w.balance >= 0 ? 'var(--text-main)' : '#F43F5E' }}>
                     {formatCOP(w.balance)}
                   </div>
                 </div>
@@ -352,15 +352,15 @@ function Wallets({ session }) {
                   <button
                     onClick={() => toggleExpand(w.name, 'income')}
                     style={{
-                      flex: 1, background: isExpandedIncome ? '#1D9E75' : '#E1F5EE',
+                      flex: 1, background: isExpandedIncome ? '#0FA971' : 'var(--success-bg)',
                       borderRadius: '8px', padding: '10px', border: 'none', cursor: 'pointer',
                       textAlign: 'center',
                     }}>
-                    <div style={{ fontSize: '13px', fontWeight: '600', color: isExpandedIncome ? '#fff' : '#1D9E75' }}>
+                    <div style={{ fontSize: '13px', fontWeight: '600', color: isExpandedIncome ? '#fff' : '#0FA971' }}>
                       Ingresos
                     </div>
                     {incomeMovs.length > 0 && (
-                      <div style={{ fontSize: '10px', color: isExpandedIncome ? 'rgba(255,255,255,0.7)' : '#6dbfa0', marginTop: '2px' }}>
+                      <div style={{ fontSize: '10px', color: isExpandedIncome ? 'rgba(255,255,255,0.7)' : 'rgba(15, 169, 113, 0.8)', marginTop: '2px' }}>
                         {incomeMovs.length} movimientos.
                       </div>
                     )}
@@ -369,15 +369,15 @@ function Wallets({ session }) {
                   <button
                     onClick={() => toggleExpand(w.name, 'expense')}
                     style={{
-                      flex: 1, background: isExpandedExpense ? '#D85A30' : '#FAECE7',
+                      flex: 1, background: isExpandedExpense ? '#F43F5E' : 'var(--error-bg)',
                       borderRadius: '8px', padding: '10px', border: 'none', cursor: 'pointer',
                       textAlign: 'center',
                     }}>
-                    <div style={{ fontSize: '13px', fontWeight: '600', color: isExpandedExpense ? '#fff' : '#D85A30' }}>
+                    <div style={{ fontSize: '13px', fontWeight: '600', color: isExpandedExpense ? '#fff' : '#F43F5E' }}>
                       Gastos
                     </div>
                     {expenseMovs.length > 0 && (
-                      <div style={{ fontSize: '10px', color: isExpandedExpense ? 'rgba(255,255,255,0.7)' : '#e09070', marginTop: '2px' }}>
+                      <div style={{ fontSize: '10px', color: isExpandedExpense ? 'rgba(255,255,255,0.7)' : 'rgba(244, 63, 94, 0.8)', marginTop: '2px' }}>
                         {expenseMovs.length} movimientos.
                       </div>
                     )}
@@ -399,7 +399,7 @@ function Wallets({ session }) {
                         padding: '10px 20px 6px',
                         display: 'flex', justifyContent: 'space-between', alignItems: 'center'
                       }}>
-                        <span style={{ fontSize: '12px', fontWeight: '500', color: isExpandedIncome ? '#1D9E75' : '#D85A30' }}>
+                        <span style={{ fontSize: '12px', fontWeight: '500', color: isExpandedIncome ? '#0FA971' : '#F43F5E' }}>
                           {isExpandedIncome ? 'Ingresos y entradas' : 'Gastos y salidas'} en {w.name}
                         </span>
                         <button onClick={() => setExpanded(null)} aria-label="Cerrar" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '8px', margin: '-8px', display: 'flex' }}>
@@ -426,7 +426,7 @@ function Wallets({ session }) {
                               </div>
                               <div style={{
                                 fontSize: '13px', fontWeight: '600', flexShrink: 0,
-                                color: isIncoming ? '#1D9E75' : '#D85A30',
+                                color: isIncoming ? '#0FA971' : '#F43F5E',
                               }}>
                                 {isIncoming ? '+' : '-'}{formatCOP(t.amount)}
                               </div>
@@ -434,7 +434,7 @@ function Wallets({ session }) {
                                 onClick={() => handleDeleteTx(t)}
                                 aria-label="Eliminar"
                                 style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '8px', margin: '-4px', flexShrink: 0, display: 'flex' }}
-                                onMouseEnter={e => e.currentTarget.style.color = '#D85A30'}
+                                onMouseEnter={e => e.currentTarget.style.color = '#F43F5E'}
                                 onMouseLeave={e => e.currentTarget.style.color = 'var(--text-lighter)'}
                               >
                                 <Trash2 size={15} />
@@ -499,7 +499,7 @@ function Wallets({ session }) {
               </div>
 
               {deleteError && (
-                <div style={{ background: '#FAECE7', color: '#712B13', fontSize: '12px', padding: '8px 10px', borderRadius: '8px', marginTop: '12px' }}>
+                <div style={{ background: 'var(--error-bg)', color: 'var(--error-text)', fontSize: '12px', padding: '8px 10px', borderRadius: '8px', marginTop: '12px' }}>
                   {deleteError}
                 </div>
               )}
@@ -514,7 +514,7 @@ function Wallets({ session }) {
                 <button
                   onClick={() => handleDeleteWallet(toDelete)}
                   disabled={deleting}
-                  style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: '#D85A30', color: '#fff', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
+                  style={{ flex: 1, padding: '10px', borderRadius: '8px', border: 'none', background: '#F43F5E', color: '#fff', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
                   {deleting ? 'Eliminando...' : 'Eliminar'}
                 </button>
               </div>

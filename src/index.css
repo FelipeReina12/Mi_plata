@@ -1,8 +1,8 @@
 :root {
   --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
+  --text-h: #16123A;
+  --bg: #EEF0FB;
+  --border: rgba(110, 90, 220, 0.16);
   --code-bg: #f4f3ec;
   --accent: #aa3bff;
   --accent-bg: rgba(170, 59, 255, 0.1);
@@ -15,20 +15,37 @@
   --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
   --mono: ui-monospace, Consolas, monospace;
 
-  /* Mis Variables - Claro */
-  --bg-app: #F7F6F3;
-  --bg-card: #ffffff;
-  --text-main: #333333;
-  --text-muted: #888888;
-  --text-light: #aaaaaa;
-  --border-light: #eeeeee;
-  --border-dim: #f5f5f5;
-  --bg-input: #ffffff;
-  --btn-cancel-hover: #f0f0f0;
+  /* Mis Variables - Claro (estilo liquid glass) */
+  --bg-app: #ECEBFF;                    /* color base, debajo de las manchas de color */
+  --bg-card: linear-gradient(145deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.38)); /* vidrio */
+  --bg-input: rgba(255, 255, 255, 0.62);
+  --text-main: #16123A;
+  --text-muted: #56517C;
+  --text-light: #8C88AB;
+  --text-lighter: #A7A3C4;
+  --border-light: rgba(110, 90, 220, 0.16);
+  --border-dim: rgba(110, 90, 220, 0.09);
+  --btn-cancel-hover: rgba(110, 90, 220, 0.08);
+
+  /* Manchas de color del fondo */
+  --blob-1: rgba(124, 92, 255, 0.55);   /* violeta */
+  --blob-2: rgba(56, 189, 248, 0.45);   /* celeste */
+  --blob-3: rgba(244, 63, 94, 0.36);    /* rosa */
+  --blob-4: rgba(15, 169, 113, 0.32);   /* verde */
+
+  /* Brillo del borde superior y sombra del vidrio */
+  --glass-edge: rgba(255, 255, 255, 0.85);
+  --glass-shadow: 0 10px 30px rgba(60, 40, 160, 0.10);
+
+  /* Avisos de error y de éxito */
+  --error-bg: rgba(244, 63, 94, 0.12);
+  --error-text: #BE123C;
+  --success-bg: rgba(15, 169, 113, 0.12);
+  --success-text: #047857;
 
   font: 18px/145% var(--sans);
   letter-spacing: 0.18px;
-  color-scheme: light dark;
+  color-scheme: light;
   color: var(--text);
   background: var(--bg);
   font-synthesis: none;
@@ -50,6 +67,11 @@ html {
   -webkit-text-size-adjust: 100%;
 }
 
+/* En modo oscuro, el color que se ve al estirar la página más allá del borde (rebote en iPhone) */
+html:has(body.dark) {
+  background: #0B0820;
+}
+
 button {
   -webkit-tap-highlight-color: transparent;
 }
@@ -61,31 +83,76 @@ button {
   }
 }
 
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid rgba(124, 92, 255, 0.55);
+  outline-offset: 1px;
+}
+
 body.dark {
-  /* Mis Variables - Oscuro */
-  --bg-app: #121212;
-  --bg-card: #1e1e1e;
-  --text-main: #e0e0e0;
-  --text-muted: #a0a0a0;
-  --text-light: #666666;
-  --border-light: #333333;
-  --border-dim: #252525;
-  --bg-input: #2c2c2c;
-  --btn-cancel-hover: #3a3a3a;
+  /* Mis Variables - Oscuro (estilo liquid glass) */
+  --bg-app: #0B0820;
+  --bg-card: linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.04));
+  --bg-input: rgba(255, 255, 255, 0.07);
+  --text-main: #F4F2FF;
+  --text-muted: #BCB6DF;
+  --text-light: #8A84B2;
+  --text-lighter: #6F6997;
+  --border-light: rgba(255, 255, 255, 0.13);
+  --border-dim: rgba(255, 255, 255, 0.07);
+  --btn-cancel-hover: rgba(255, 255, 255, 0.08);
+
+  --blob-1: rgba(124, 92, 255, 0.50);
+  --blob-2: rgba(56, 189, 248, 0.26);
+  --blob-3: rgba(244, 63, 94, 0.28);
+  --blob-4: rgba(15, 169, 113, 0.22);
+
+  --glass-edge: rgba(255, 255, 255, 0.14);
+  --glass-shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+
+  --error-bg: rgba(244, 63, 94, 0.16);
+  --error-text: #FDA4AF;
+  --success-bg: rgba(15, 169, 113, 0.18);
+  --success-text: #6EE7B7;
+
+  /* Selectores de fecha y listas desplegables en oscuro */
+  color-scheme: dark;
 
   /* Vite variables adaptadas */
   --text: #9ca3af;
-  --text-h: #f3f4f6;
-  --bg: #16171d;
-  --border: #2e303a;
+  --text-h: #F4F2FF;
+  --bg: #0B0820;
+  --border: rgba(255, 255, 255, 0.13);
   --code-bg: #1f2028;
 }
 
 body {
   margin: 0;
-  background-color: var(--bg-app);
+  background: transparent; /* el color de fondo lo pone la capa de manchas (body::before) */
   color: var(--text-main);
-  transition: background-color 0.3s ease, color 0.3s ease;
+  transition: color 0.3s ease;
+}
+
+/* Fondo liquid glass: manchas de color fijas detrás de todo; las tarjetas de vidrio las desenfocan */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 8% 0%,    var(--blob-1), transparent 45%),
+    radial-gradient(circle at 100% 12%, var(--blob-2), transparent 42%),
+    radial-gradient(circle at 88% 100%, var(--blob-3), transparent 45%),
+    radial-gradient(circle at 0% 88%,   var(--blob-4), transparent 42%),
+    var(--bg-app);
+}
+
+/* Liquid glass: toda superficie con fondo var(--bg-card) (tarjetas, menús, ventanas, barra inferior)
+   se vuelve vidrio esmerilado, con un brillo en el borde superior */
+[style*="var(--bg-card)"] {
+  -webkit-backdrop-filter: blur(20px) saturate(170%);
+  backdrop-filter: blur(20px) saturate(170%);
+  box-shadow: inset 0 1px 0 var(--glass-edge), var(--glass-shadow);
 }
 
 #root {
@@ -93,16 +160,14 @@ body {
   max-width: 100%;
   margin: 0 auto;
   text-align: center;
-  border-inline: 1px solid var(--border);
   min-height: 100svh;
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
 
-  /* En celular el texto se lee mejor alineado a la izquierda y sin bordes laterales */
+  /* En celular el texto se lee mejor alineado a la izquierda */
   @media (max-width: 767px) {
     text-align: left;
-    border-inline: none;
   }
 }
 
