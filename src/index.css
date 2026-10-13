@@ -50,6 +50,7 @@
   --success-text: #047857;
 
   font: 18px/145% var(--sans);
+  font-variant-numeric: tabular-nums;
   letter-spacing: 0.18px;
   color-scheme: light;
   color: var(--text);
@@ -87,6 +88,10 @@ button {
   input, select, textarea {
     font-size: 16px !important;
   }
+}
+
+input, select, textarea, button, .tabular-nums {
+  font-variant-numeric: tabular-nums;
 }
 
 input:focus-visible, select:focus-visible, textarea:focus-visible {
@@ -168,6 +173,7 @@ body {
   margin: 0;
   background: transparent; /* el color de fondo lo pone la capa de manchas (body::before) */
   color: var(--text-main);
+  font-variant-numeric: tabular-nums;
   transition: color 0.3s ease;
 }
 

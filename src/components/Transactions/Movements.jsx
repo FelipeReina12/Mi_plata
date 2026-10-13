@@ -221,6 +221,7 @@ function Movements({ initialFilter = 'all' }) {
             <div style={{
               fontSize: '13px', fontWeight: '600', flexShrink: 0,
               color: t.type === 'transfer' ? '#7C5CFF' : t.type === 'income' ? 'var(--color-income)' : 'var(--color-expense)',
+              fontVariantNumeric: 'tabular-nums',
             }}>
               {t.type === 'transfer' ? (t.description.includes('→') || t.description.includes('->') ? '-' : '+') : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
             </div>

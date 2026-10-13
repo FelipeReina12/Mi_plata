@@ -39,7 +39,7 @@ function MetricCard({ label, value, sub, color, compact, onClick }) {
           <ArrowUpRight size={14} color="var(--text-light)" style={{ opacity: 0.8 }} />
         )}
       </div>
-      <div style={{ fontSize: compact ? '18px' : '22px', fontWeight: '600', color: color || 'var(--text-main)', overflowWrap: 'anywhere' }}>
+      <div style={{ fontSize: compact ? '18px' : '22px', fontWeight: '600', color: color || 'var(--text-main)', overflowWrap: 'anywhere', fontVariantNumeric: 'tabular-nums' }}>
         {value}
       </div>
       <div style={{ fontSize: '12px', color: 'var(--text-light)', marginTop: '4px' }}>
