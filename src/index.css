@@ -20,6 +20,7 @@
   --bg-card: linear-gradient(145deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.38)); /* vidrio */
   --bg-input: rgba(255, 255, 255, 0.62);
   --bg-dropdown: linear-gradient(165deg, #FFFFFF 0%, #F6F5FF 100%);
+  --bg-bottom-nav: rgba(245, 244, 255, 0.94);
   --text-main: #16123A;
   --text-muted: #56517C;
   --text-light: #8C88AB;
@@ -122,6 +123,7 @@ body.dark {
   --bg-card: linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.04));
   --bg-input: rgba(255, 255, 255, 0.07);
   --bg-dropdown: linear-gradient(165deg, #1C1744 0%, #130F32 100%);
+  --bg-bottom-nav: rgba(12, 9, 30, 0.95);
   --text-main: #F4F2FF;
   --text-muted: #BCB6DF;
   --text-light: #8A84B2;
@@ -178,7 +180,8 @@ body::before {
 
 /* Liquid glass: toda superficie con fondo var(--bg-card) (tarjetas, menús, ventanas, barra inferior)
    se vuelve vidrio esmerilado, con un brillo en el borde superior */
-[style*="var(--bg-card)"] {
+[style*="var(--bg-card)"],
+[style*="var(--bg-bottom-nav)"] {
   -webkit-backdrop-filter: blur(20px) saturate(170%);
   backdrop-filter: blur(20px) saturate(170%);
   box-shadow: inset 0 1px 0 var(--glass-edge), var(--glass-shadow);

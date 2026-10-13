@@ -55,7 +55,7 @@ function BottomNav({ page, setPage }) {
               transition={{ duration: 0.25, ease: 'easeOut' }}
               style={{
                 position: 'fixed', left: 0, right: 0, bottom: 0, zIndex: 100,
-                background: 'var(--bg-card)', borderRadius: '16px 16px 0 0',
+                background: 'var(--bg-bottom-nav)', borderRadius: '16px 16px 0 0',
                 padding: '8px 16px calc(80px + env(safe-area-inset-bottom))',
               }}
             >
@@ -82,7 +82,7 @@ function BottomNav({ page, setPage }) {
 
       <nav style={{
         position: 'fixed', bottom: 0, left: 0, right: 0,
-        background: 'var(--bg-card)', borderTop: '1px solid var(--border-light)',
+        background: 'var(--bg-bottom-nav)', borderTop: '1px solid var(--border-light)',
         display: 'flex', zIndex: 101,
         paddingBottom: 'env(safe-area-inset-bottom)',
       }}>
