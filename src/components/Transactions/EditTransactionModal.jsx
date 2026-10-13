@@ -53,7 +53,8 @@ function Buttons({ saving, onClose, onSave }) {
       <button
         onClick={onSave}
         disabled={saving}
-        style={{ flex: 2, padding: '10px', borderRadius: '8px', border: 'none', background: '#7C5CFF', color: '#fff', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
+        className="btn-primary"
+        style={{ flex: 2, padding: '10px', borderRadius: '8px', fontSize: '13px' }}>
         {saving ? 'Guardando...' : 'Guardar cambios'}
       </button>
     </div>
@@ -85,20 +86,23 @@ function IncomeExpenseForm({ transaction, walletNames, onClose, onSaved }) {
     onSaved([row])
   }
 
-  const typeBtn = (active, color, textColor = '#fff') => ({
-    flex: 1, padding: '8px', borderRadius: '8px', cursor: 'pointer', fontWeight: '500', fontSize: '13px',
-    border: active ? 'none' : '1px solid var(--border-light)',
-    background: active ? color : 'transparent',
-    color: active ? textColor : 'var(--text-muted)',
-  })
-
   return (
     <>
       <h3 style={titleStyle}>Editar movimiento</h3>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-        <button style={typeBtn(type === 'income', 'var(--color-income)', 'var(--color-income-text)')} onClick={() => setType('income')}>↓ Ingreso</button>
-        <button style={typeBtn(type === 'expense', 'var(--color-expense)', 'var(--color-expense-text)')} onClick={() => setType('expense')}>↑ Gasto</button>
+        <button
+          className={type === 'income' ? 'btn-glass-income' : 'btn-glass-inactive'}
+          style={{ flex: 1, padding: '9px', borderRadius: '8px', fontSize: '13px' }}
+          onClick={() => setType('income')}>
+          ↓ Ingreso
+        </button>
+        <button
+          className={type === 'expense' ? 'btn-glass-expense' : 'btn-glass-inactive'}
+          style={{ flex: 1, padding: '9px', borderRadius: '8px', fontSize: '13px' }}
+          onClick={() => setType('expense')}>
+          ↑ Gasto
+        </button>
       </div>
 
       <div style={{ marginBottom: '10px' }}>
@@ -267,7 +271,8 @@ function EditTransactionModal({ transaction, partner, walletNames, onClose, onSa
             </p>
             <button
               onClick={onClose}
-              style={{ width: '100%', marginTop: '18px', padding: '10px', borderRadius: '8px', border: 'none', background: '#7C5CFF', color: '#fff', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}>
+              className="btn-primary"
+              style={{ width: '100%', marginTop: '18px', padding: '10px', borderRadius: '8px', fontSize: '13px' }}>
               Entendido
             </button>
           </>

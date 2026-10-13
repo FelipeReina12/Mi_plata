@@ -94,14 +94,6 @@ function Movements({ initialFilter = 'all' }) {
       return [t.description, t.category, t.wallet, t.date].some(field => normalize(field).includes(query))
     })
 
-  const btnFilter = (active) => ({
-    padding: '7px 14px', borderRadius: '8px',
-    fontSize: '13px', cursor: 'pointer', fontWeight: '500',
-    background: active ? '#7C5CFF' : 'var(--bg-input)',
-    color:      active ? '#fff'    : 'var(--text-muted)',
-    border:     active ? '1px solid transparent' : '1px solid var(--border-light)',
-  })
-
   if (loading) return <p style={{ color: 'var(--text-muted)', padding: '20px' }}>Cargando movimientos...</p>
 
   return (
@@ -120,10 +112,30 @@ function Movements({ initialFilter = 'all' }) {
 
         {/* Tipo — centrado, incluyendo transferencias */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
-          <button style={btnFilter(filterType === 'all')}      onClick={() => setFilterType('all')}>      Todos        </button>
-          <button style={btnFilter(filterType === 'income')}   onClick={() => setFilterType('income')}>   Ingresos     </button>
-          <button style={btnFilter(filterType === 'expense')}  onClick={() => setFilterType('expense')}>  Gastos       </button>
-          <button style={btnFilter(filterType === 'transfer')} onClick={() => setFilterType('transfer')}> Transferencias</button>
+          <button
+            className={filterType === 'all' ? 'btn-glass-purple' : 'btn-glass-inactive'}
+            style={{ padding: '7px 16px', borderRadius: '8px', fontSize: '13px' }}
+            onClick={() => setFilterType('all')}>
+            Todos
+          </button>
+          <button
+            className={filterType === 'income' ? 'btn-glass-income' : 'btn-glass-inactive'}
+            style={{ padding: '7px 16px', borderRadius: '8px', fontSize: '13px' }}
+            onClick={() => setFilterType('income')}>
+            Ingresos
+          </button>
+          <button
+            className={filterType === 'expense' ? 'btn-glass-expense' : 'btn-glass-inactive'}
+            style={{ padding: '7px 16px', borderRadius: '8px', fontSize: '13px' }}
+            onClick={() => setFilterType('expense')}>
+            Gastos
+          </button>
+          <button
+            className={filterType === 'transfer' ? 'btn-glass-purple' : 'btn-glass-inactive'}
+            style={{ padding: '7px 16px', borderRadius: '8px', fontSize: '13px' }}
+            onClick={() => setFilterType('transfer')}>
+            Transferencias
+          </button>
         </div>
 
         {/* Categoría */}

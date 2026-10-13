@@ -48,14 +48,6 @@ function TransactionForm({ onAdd }) {
     setAmount('')
   }
 
-  const btnStyle = (active, color, textColor = '#fff') => ({
-    flex: 1, padding: '8px', borderRadius: '8px', cursor: 'pointer',
-    fontWeight: '500', fontSize: '13px',
-    border: active ? 'none' : '1px solid var(--border-light)',
-    background: active ? color : 'transparent',
-    color: active ? textColor : 'var(--text-muted)',
-  })
-
   const inputStyle = {
     width: '100%', padding: '8px 10px', fontSize: '14px',
     border: '1px solid var(--border-light)', borderRadius: '8px',
@@ -75,10 +67,16 @@ function TransactionForm({ onAdd }) {
       <h3 style={{ marginBottom: '16px', fontSize: '14px', color: 'var(--text-main)' }}>Registrar movimiento</h3>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-        <button style={btnStyle(type === 'income',  'var(--color-income)', 'var(--color-income-text)')} onClick={() => setType('income')}>
+        <button
+          className={type === 'income' ? 'btn-glass-income' : 'btn-glass-inactive'}
+          style={{ flex: 1, padding: '9px', borderRadius: '8px', fontSize: '13px' }}
+          onClick={() => setType('income')}>
           ↓ Ingreso
         </button>
-        <button style={btnStyle(type === 'expense', 'var(--color-expense)', 'var(--color-expense-text)')} onClick={() => setType('expense')}>
+        <button
+          className={type === 'expense' ? 'btn-glass-expense' : 'btn-glass-inactive'}
+          style={{ flex: 1, padding: '9px', borderRadius: '8px', fontSize: '13px' }}
+          onClick={() => setType('expense')}>
           ↑ Gasto
         </button>
       </div>
@@ -129,10 +127,10 @@ function TransactionForm({ onAdd }) {
 
       <button
         onClick={handleSubmit}
+        className="btn-primary"
         style={{
-          width: '100%', padding: '10px', borderRadius: '8px', border: 'none',
-          background: '#7C5CFF', color: '#fff', fontWeight: '600',
-          fontSize: '14px', cursor: 'pointer',
+          width: '100%', padding: '11px', borderRadius: '8px',
+          fontSize: '14px',
         }}>
         Guardar movimiento
       </button>

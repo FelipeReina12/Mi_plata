@@ -218,11 +218,9 @@ function Wallets({ session }) {
           </button>
           <button
             onClick={() => { setShowForm(!showForm); if (showTransfer) setShowTransfer(false) }}
+            className="btn-primary"
             style={{
-              display: 'flex', alignItems: 'center', gap: '6px',
-              padding: '8px 14px', borderRadius: '8px', border: 'none',
-              background: '#7C5CFF', color: '#fff', fontSize: '13px',
-              fontWeight: '500', cursor: 'pointer',
+              padding: '8px 14px', borderRadius: '8px', fontSize: '13px', gap: '6px',
             }}>
             <Plus size={15} /> Nueva billetera
           </button>
@@ -282,7 +280,7 @@ function Wallets({ session }) {
                 <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
                   Cancelar
                 </button>
-                <button onClick={handleAddWallet} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7C5CFF', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+                <button onClick={handleAddWallet} disabled={saving} className="btn-primary" style={{ flex: 2, padding: '9px', borderRadius: '8px', fontSize: '13px' }}>
                   {saving ? 'Guardando...' : 'Guardar billetera'}
                 </button>
               </div>
@@ -331,7 +329,7 @@ function Wallets({ session }) {
                       onClick={() => { setToDelete(w); setDeleteError('') }}
                       aria-label={`Eliminar ${w.name}`}
                       style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '8px', margin: '-8px', display: 'flex', flexShrink: 0 }}
-                      onMouseEnter={e => e.currentTarget.style.color = '#F43F5E'}
+                      onMouseEnter={e => e.currentTarget.style.color = 'var(--color-expense)'}
                       onMouseLeave={e => e.currentTarget.style.color = 'var(--text-lighter)'}
                     >
                       <Trash2 size={16} />
@@ -342,7 +340,7 @@ function Wallets({ session }) {
                 {/* Saldo */}
                 <div style={{ marginBottom: '16px' }}>
                   <div style={{ fontSize: '11px', color: 'var(--text-muted)', marginBottom: '4px', textTransform: 'uppercase' }}>Saldo</div>
-                  <div style={{ fontSize: '22px', fontWeight: '700', color: w.balance >= 0 ? 'var(--text-main)' : '#F43F5E' }}>
+                  <div style={{ fontSize: '22px', fontWeight: '700', fontVariantNumeric: 'tabular-nums', color: w.balance >= 0 ? 'var(--text-main)' : 'var(--color-expense)' }}>
                     {formatCOP(w.balance)}
                   </div>
                 </div>
@@ -351,34 +349,46 @@ function Wallets({ session }) {
                 <div style={{ display: 'flex', gap: '12px' }}>
                   <button
                     onClick={() => toggleExpand(w.name, 'income')}
+                    className={isExpandedIncome ? 'btn-glass-income' : ''}
                     style={{
-                      flex: 1, background: isExpandedIncome ? '#0FA971' : 'var(--success-bg)',
-                      borderRadius: '8px', padding: '10px', border: 'none', cursor: 'pointer',
+                      flex: 1,
+                      borderRadius: '10px',
+                      padding: '10px',
+                      cursor: 'pointer',
                       textAlign: 'center',
+                      background: isExpandedIncome ? undefined : 'var(--color-income-subtle)',
+                      border: isExpandedIncome ? undefined : '1px solid var(--border-light)',
+                      transition: 'all 0.18s ease',
                     }}>
-                    <div style={{ fontSize: '13px', fontWeight: '600', color: isExpandedIncome ? '#fff' : '#0FA971' }}>
+                    <div style={{ fontSize: '13px', fontWeight: '600', color: isExpandedIncome ? '#fff' : 'var(--color-income)' }}>
                       Ingresos
                     </div>
                     {incomeMovs.length > 0 && (
-                      <div style={{ fontSize: '10px', color: isExpandedIncome ? 'rgba(255,255,255,0.7)' : 'rgba(15, 169, 113, 0.8)', marginTop: '2px' }}>
-                        {incomeMovs.length} movimientos.
+                      <div style={{ fontSize: '10px', color: isExpandedIncome ? 'rgba(255,255,255,0.85)' : 'var(--color-income)', marginTop: '2px' }}>
+                        {incomeMovs.length} movimientos
                       </div>
                     )}
                   </button>
 
                   <button
                     onClick={() => toggleExpand(w.name, 'expense')}
+                    className={isExpandedExpense ? 'btn-glass-expense' : ''}
                     style={{
-                      flex: 1, background: isExpandedExpense ? '#F43F5E' : 'var(--error-bg)',
-                      borderRadius: '8px', padding: '10px', border: 'none', cursor: 'pointer',
+                      flex: 1,
+                      borderRadius: '10px',
+                      padding: '10px',
+                      cursor: 'pointer',
                       textAlign: 'center',
+                      background: isExpandedExpense ? undefined : 'var(--color-expense-subtle)',
+                      border: isExpandedExpense ? undefined : '1px solid var(--border-light)',
+                      transition: 'all 0.18s ease',
                     }}>
-                    <div style={{ fontSize: '13px', fontWeight: '600', color: isExpandedExpense ? '#fff' : '#F43F5E' }}>
+                    <div style={{ fontSize: '13px', fontWeight: '600', color: isExpandedExpense ? '#fff' : 'var(--color-expense)' }}>
                       Gastos
                     </div>
                     {expenseMovs.length > 0 && (
-                      <div style={{ fontSize: '10px', color: isExpandedExpense ? 'rgba(255,255,255,0.7)' : 'rgba(244, 63, 94, 0.8)', marginTop: '2px' }}>
-                        {expenseMovs.length} movimientos.
+                      <div style={{ fontSize: '10px', color: isExpandedExpense ? 'rgba(255,255,255,0.85)' : 'var(--color-expense)', marginTop: '2px' }}>
+                        {expenseMovs.length} movimientos
                       </div>
                     )}
                   </button>
@@ -399,7 +409,7 @@ function Wallets({ session }) {
                         padding: '10px 20px 6px',
                         display: 'flex', justifyContent: 'space-between', alignItems: 'center'
                       }}>
-                        <span style={{ fontSize: '12px', fontWeight: '500', color: isExpandedIncome ? '#0FA971' : '#F43F5E' }}>
+                        <span style={{ fontSize: '12px', fontWeight: '500', color: isExpandedIncome ? 'var(--color-income)' : 'var(--color-expense)' }}>
                           {isExpandedIncome ? 'Ingresos y entradas' : 'Gastos y salidas'} en {w.name}
                         </span>
                         <button onClick={() => setExpanded(null)} aria-label="Cerrar" style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '8px', margin: '-8px', display: 'flex' }}>
@@ -426,7 +436,8 @@ function Wallets({ session }) {
                               </div>
                               <div style={{
                                 fontSize: '13px', fontWeight: '600', flexShrink: 0,
-                                color: isIncoming ? '#0FA971' : '#F43F5E',
+                                fontVariantNumeric: 'tabular-nums',
+                                color: isIncoming ? 'var(--color-income)' : 'var(--color-expense)',
                               }}>
                                 {isIncoming ? '+' : '-'}{formatCOP(t.amount)}
                               </div>
@@ -434,7 +445,7 @@ function Wallets({ session }) {
                                 onClick={() => handleDeleteTx(t)}
                                 aria-label="Eliminar"
                                 style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--text-lighter)', padding: '8px', margin: '-4px', flexShrink: 0, display: 'flex' }}
-                                onMouseEnter={e => e.currentTarget.style.color = '#F43F5E'}
+                                onMouseEnter={e => e.currentTarget.style.color = 'var(--color-expense)'}
                                 onMouseLeave={e => e.currentTarget.style.color = 'var(--text-lighter)'}
                               >
                                 <Trash2 size={15} />

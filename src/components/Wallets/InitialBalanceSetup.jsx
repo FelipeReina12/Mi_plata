@@ -116,7 +116,8 @@ function InitialBalanceSetup({ session, wallets, transactions, onSaved }) {
         <button
           onClick={() => save(false)}
           disabled={saving}
-          style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7C5CFF', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+          className="btn-primary"
+          style={{ flex: 2, padding: '9px', borderRadius: '8px', fontSize: '13px' }}>
           {saving ? 'Guardando...' : 'Guardar saldos'}
         </button>
       </div>

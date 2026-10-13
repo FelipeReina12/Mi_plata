@@ -78,10 +78,10 @@ function ResetPassword() {
         <button
           onClick={handleReset}
           disabled={loading || !!message}
+          className="btn-primary"
           style={{
-            width: '100%', padding: '11px', borderRadius: '8px', border: 'none',
-            background: loading || message ? '#bbb' : '#7C5CFF', color: '#fff',
-            fontWeight: '600', fontSize: '14px', cursor: 'pointer',
+            width: '100%', padding: '11px', borderRadius: '8px',
+            fontSize: '14px',
           }}>
           {loading ? 'Guardando...' : 'Actualizar contraseña'}
         </button>

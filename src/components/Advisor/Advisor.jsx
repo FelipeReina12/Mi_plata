@@ -80,11 +80,9 @@ function Advisor() {
 
           <button
             onClick={handleAnalyze}
+            className="btn-primary"
             style={{
-              padding: '12px 24px', borderRadius: '99px', border: 'none',
-              background: '#7C5CFF', color: '#fff', fontSize: '15px', fontWeight: '600',
-              cursor: 'pointer', display: 'inline-flex', alignItems: 'center', gap: '8px',
-              boxShadow: '0 4px 14px rgba(124, 92, 255, 0.3)'
+              padding: '12px 26px', borderRadius: '99px', fontSize: '15px', gap: '8px',
             }}
           >
             <Sparkles size={18} />

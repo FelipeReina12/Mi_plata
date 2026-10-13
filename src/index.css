@@ -49,6 +49,33 @@
   --success-bg: rgba(15, 169, 113, 0.12);
   --success-text: #047857;
 
+  /* Botón primario de cristal con degradado y glow */
+  --btn-primary-bg: linear-gradient(135deg, #8B6CFF 0%, #6842FF 100%);
+  --btn-primary-border: rgba(255, 255, 255, 0.35);
+  --btn-primary-highlight: rgba(255, 255, 255, 0.45);
+  --btn-primary-glow: 0 4px 18px rgba(124, 92, 255, 0.38);
+  --btn-primary-glow-hover: 0 6px 26px rgba(124, 92, 255, 0.52);
+  --btn-primary-glow-active: 0 2px 10px rgba(124, 92, 255, 0.32);
+
+  --color-income-subtle: rgba(15, 169, 113, 0.12);
+  --color-expense-subtle: rgba(244, 63, 94, 0.12);
+
+  /* Botones / chips de Ingresos (Verde esmeralda) */
+  --btn-income-bg: linear-gradient(135deg, #10B981 0%, #059669 100%);
+  --btn-income-border: rgba(255, 255, 255, 0.35);
+  --btn-income-highlight: rgba(255, 255, 255, 0.45);
+  --btn-income-glow: 0 4px 18px rgba(16, 185, 129, 0.38);
+  --btn-income-glow-hover: 0 6px 26px rgba(16, 185, 129, 0.52);
+  --btn-income-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+
+  /* Botones / chips de Gastos (Rosa carmesí) */
+  --btn-expense-bg: linear-gradient(135deg, #F43F5E 0%, #E11D48 100%);
+  --btn-expense-border: rgba(255, 255, 255, 0.35);
+  --btn-expense-highlight: rgba(255, 255, 255, 0.45);
+  --btn-expense-glow: 0 4px 18px rgba(244, 63, 94, 0.38);
+  --btn-expense-glow-hover: 0 6px 26px rgba(244, 63, 94, 0.52);
+  --btn-expense-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+
   font: 18px/145% var(--sans);
   font-variant-numeric: tabular-nums;
   letter-spacing: 0.18px;
@@ -125,6 +152,175 @@ body.dark select option {
   background: rgba(124, 92, 255, 0.4);
 }
 
+/* Botones de acción principales y filtros morados con degradado y Glow de cristal */
+.btn-primary,
+.btn-glass-purple {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--btn-primary-bg);
+  color: #ffffff !important;
+  border: 1px solid var(--btn-primary-border);
+  box-shadow: inset 0 1px 0 var(--btn-primary-highlight), var(--btn-primary-glow);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.22);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.18s ease;
+}
+
+.btn-primary::after,
+.btn-glass-purple::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.0) 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.btn-primary:hover:not(:disabled),
+.btn-glass-purple:hover:not(:disabled) {
+  transform: translateY(-1.5px);
+  filter: brightness(1.06);
+  box-shadow: inset 0 1px 0 var(--btn-primary-highlight), var(--btn-primary-glow-hover);
+}
+
+.btn-primary:active:not(:disabled),
+.btn-glass-purple:active:not(:disabled) {
+  transform: translateY(0.5px);
+  filter: brightness(0.98);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), var(--btn-primary-glow-active);
+}
+
+.btn-primary:disabled,
+.btn-glass-purple:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  filter: grayscale(0.25);
+  transform: none;
+  box-shadow: none;
+}
+
+/* Botón / Chip de Ingresos con degradado y Glow de cristal */
+.btn-glass-income {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--btn-income-bg);
+  color: #ffffff !important;
+  border: 1px solid var(--btn-income-border);
+  box-shadow: inset 0 1px 0 var(--btn-income-highlight), var(--btn-income-glow);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.18s ease;
+}
+
+.btn-glass-income::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.0) 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.btn-glass-income:hover:not(:disabled) {
+  transform: translateY(-1.5px);
+  filter: brightness(1.06);
+  box-shadow: inset 0 1px 0 var(--btn-income-highlight), var(--btn-income-glow-hover);
+}
+
+.btn-glass-income:active:not(:disabled) {
+  transform: translateY(0.5px);
+  filter: brightness(0.98);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), var(--btn-income-glow);
+}
+
+/* Botón / Chip de Gastos con degradado y Glow de cristal */
+.btn-glass-expense {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  background: var(--btn-expense-bg);
+  color: #ffffff !important;
+  border: 1px solid var(--btn-expense-border);
+  box-shadow: inset 0 1px 0 var(--btn-expense-highlight), var(--btn-expense-glow);
+  font-weight: 600;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  user-select: none;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              box-shadow 0.18s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.18s ease;
+}
+
+.btn-glass-expense::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.0) 100%);
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+.btn-glass-expense:hover:not(:disabled) {
+  transform: translateY(-1.5px);
+  filter: brightness(1.06);
+  box-shadow: inset 0 1px 0 var(--btn-expense-highlight), var(--btn-expense-glow-hover);
+}
+
+.btn-glass-expense:active:not(:disabled) {
+  transform: translateY(0.5px);
+  filter: brightness(0.98);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), var(--btn-expense-glow);
+}
+
+/* Botón / Chip Inactivo estándar */
+.btn-glass-inactive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-input);
+  color: var(--text-muted);
+  border: 1px solid var(--border-light);
+  cursor: pointer;
+  font-weight: 500;
+  user-select: none;
+  transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.btn-glass-inactive:hover {
+  background: var(--border-light);
+  color: var(--text-main);
+  transform: translateY(-1px);
+}
+
+.btn-glass-inactive:active {
+  transform: translateY(0);
+}
+
 
 body.dark {
   /* Mis Variables - Oscuro (estilo liquid glass) */
@@ -134,9 +330,9 @@ body.dark {
   --bg-dropdown: linear-gradient(165deg, #1C1744 0%, #130F32 100%);
   --bg-bottom-nav: rgba(12, 9, 30, 0.95);
   --color-income: #38BDF8;
-  --color-income-text: #0B0820;
+  --color-income-text: #FFFFFF;
   --color-expense: #F472B6;
-  --color-expense-text: #0B0820;
+  --color-expense-text: #FFFFFF;
   --text-main: #F4F2FF;
   --text-muted: #BCB6DF;
   --text-light: #8A84B2;
@@ -157,6 +353,33 @@ body.dark {
   --error-text: #FDA4AF;
   --success-bg: rgba(15, 169, 113, 0.18);
   --success-text: #6EE7B7;
+
+  /* Botón primario de cristal con degradado y glow */
+  --btn-primary-bg: linear-gradient(135deg, #9374FF 0%, #6C44FF 100%);
+  --btn-primary-border: rgba(255, 255, 255, 0.24);
+  --btn-primary-highlight: rgba(255, 255, 255, 0.36);
+  --btn-primary-glow: 0 4px 22px rgba(124, 92, 255, 0.50), 0 0 14px rgba(142, 114, 255, 0.25);
+  --btn-primary-glow-hover: 0 6px 30px rgba(124, 92, 255, 0.70), 0 0 20px rgba(142, 114, 255, 0.40);
+  --btn-primary-glow-active: 0 2px 12px rgba(124, 92, 255, 0.42);
+
+  --color-income-subtle: rgba(56, 189, 248, 0.14);
+  --color-expense-subtle: rgba(244, 114, 182, 0.14);
+
+  /* Botones / chips de Ingresos (Cian eléctrico neón) */
+  --btn-income-bg: linear-gradient(135deg, #0EA5E9 0%, #0284C7 100%);
+  --btn-income-border: rgba(255, 255, 255, 0.28);
+  --btn-income-highlight: rgba(255, 255, 255, 0.40);
+  --btn-income-glow: 0 4px 22px rgba(56, 189, 248, 0.50), 0 0 14px rgba(56, 189, 248, 0.25);
+  --btn-income-glow-hover: 0 6px 28px rgba(56, 189, 248, 0.70), 0 0 18px rgba(56, 189, 248, 0.40);
+  --btn-income-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+
+  /* Botones / chips de Gastos (Rosa neón suave) */
+  --btn-expense-bg: linear-gradient(135deg, #EC4899 0%, #BE185D 100%);
+  --btn-expense-border: rgba(255, 255, 255, 0.28);
+  --btn-expense-highlight: rgba(255, 255, 255, 0.40);
+  --btn-expense-glow: 0 4px 22px rgba(244, 114, 182, 0.50), 0 0 14px rgba(244, 114, 182, 0.25);
+  --btn-expense-glow-hover: 0 6px 28px rgba(244, 114, 182, 0.70), 0 0 18px rgba(244, 114, 182, 0.40);
+  --btn-expense-text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
 
   /* Selectores de fecha y listas desplegables en oscuro */
   color-scheme: dark;

@@ -129,10 +129,10 @@ function Login() {
         <button
           onClick={handleSubmit}
           disabled={loading}
+          className="btn-primary"
           style={{
-            width: '100%', padding: '11px', borderRadius: '8px', border: 'none',
-            background: loading ? '#bbb' : '#7C5CFF', color: '#fff',
-            fontWeight: '600', fontSize: '14px', cursor: loading ? 'default' : 'pointer',
+            width: '100%', padding: '11px', borderRadius: '8px',
+            fontSize: '14px',
           }}>
           {loading ? 'Cargando...' :
            mode === 'login'    ? 'Entrar'                    :

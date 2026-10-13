@@ -153,11 +153,10 @@ function TransferForm({ session, onTransfer }) {
       <button
         onClick={handleTransfer}
         disabled={saving}
+        className="btn-primary"
         style={{
-          width: '100%', padding: '10px', borderRadius: '8px', border: 'none',
-          background: saving ? '#bbb' : '#7C5CFF', color: '#fff',
-          fontWeight: '600', fontSize: '14px', cursor: saving ? 'default' : 'pointer',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px',
+          width: '100%', padding: '11px', borderRadius: '8px',
+          fontSize: '14px', gap: '8px',
         }}>
         <ArrowRightLeft size={15} />
         {saving ? 'Registrando...' : 'Realizar transferencia'}

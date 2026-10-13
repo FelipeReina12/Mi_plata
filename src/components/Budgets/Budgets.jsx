@@ -89,11 +89,9 @@ function Budgets({ session }) {
         <h2 style={{ color: 'var(--text-main)', fontWeight: '600' }}>Presupuestos</h2>
         <button
           onClick={() => setShowForm(!showForm)}
+          className="btn-primary"
           style={{
-            display: 'flex', alignItems: 'center', gap: '6px',
-            padding: '8px 14px', borderRadius: '8px', border: 'none',
-            background: '#7C5CFF', color: '#fff', fontSize: '13px',
-            fontWeight: '500', cursor: 'pointer',
+            padding: '8px 14px', borderRadius: '8px', fontSize: '13px', gap: '6px',
           }}>
           <Plus size={15} /> Nuevo presupuesto
         </button>
@@ -127,7 +125,7 @@ function Budgets({ session }) {
                 <button onClick={() => setShowForm(false)} style={{ flex: 1, padding: '9px', borderRadius: '8px', border: '1px solid var(--border-light)', background: 'transparent', fontSize: '13px', color: 'var(--text-muted)', cursor: 'pointer' }}>
                   Cancelar
                 </button>
-                <button onClick={handleAddBudget} disabled={saving} style={{ flex: 2, padding: '9px', borderRadius: '8px', border: 'none', background: '#7C5CFF', color: '#fff', fontSize: '13px', fontWeight: '500', cursor: 'pointer' }}>
+                <button onClick={handleAddBudget} disabled={saving} className="btn-primary" style={{ flex: 2, padding: '9px', borderRadius: '8px', fontSize: '13px' }}>
                   {saving ? 'Guardando...' : 'Guardar presupuesto'}
                 </button>
               </div>
