@@ -14,7 +14,7 @@ function formatCOP(num) {
   return '$' + num.toLocaleString('es-CO')
 }
 
-function Dashboard({ session, setPage }) {
+function Dashboard({ session, setPage, setMovementsFilter }) {
   const [transactions,  setTransactions]  = useState([])
   const [subscriptions, setSubscriptions] = useState([])
   const [loading,       setLoading]       = useState(true)
@@ -113,10 +113,39 @@ function Dashboard({ session, setPage }) {
         }}
       >
         <div style={{ gridColumn: isMobile ? '1 / -1' : 'auto' }}>
-          <MetricCard label="Saldo total" value={formatCOP(totalBalance)} sub="Todas las cuentas" color="var(--text-main)" />
+          <MetricCard
+            label="Saldo total"
+            value={formatCOP(totalBalance)}
+            sub="Todas las cuentas"
+            color="var(--text-main)"
+            onClick={() => {
+              setMovementsFilter?.('all')
+              setPage?.('movements')
+            }}
+          />
         </div>
-        <MetricCard label="Ingresos" value={formatCOP(totalIncome)}  sub="Este mes" color="#0FA971" compact={isMobile} />
-        <MetricCard label="Gastos"   value={formatCOP(totalExpense)} sub="Este mes" color="#F43F5E" compact={isMobile} />
+        <MetricCard
+          label="Ingresos"
+          value={formatCOP(totalIncome)}
+          sub="Este mes"
+          color="#0FA971"
+          compact={isMobile}
+          onClick={() => {
+            setMovementsFilter?.('income')
+            setPage?.('movements')
+          }}
+        />
+        <MetricCard
+          label="Gastos"
+          value={formatCOP(totalExpense)}
+          sub="Este mes"
+          color="#F43F5E"
+          compact={isMobile}
+          onClick={() => {
+            setMovementsFilter?.('expense')
+            setPage?.('movements')
+          }}
+        />
       </motion.div>
 
       <TransactionForm onAdd={handleAdd} />

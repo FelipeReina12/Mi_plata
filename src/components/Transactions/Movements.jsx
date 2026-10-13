@@ -21,11 +21,11 @@ function normalize(text) {
   return (text || '').toString().toLowerCase().normalize('NFD').replace(/\p{Diacritic}/gu, '')
 }
 
-function Movements() {
+function Movements({ initialFilter = 'all' }) {
   const [transactions, setTransactions] = useState([])
   const [wallets,      setWallets]      = useState([])
   const [loading,      setLoading]      = useState(true)
-  const [filterType,   setFilterType]   = useState('all')
+  const [filterType,   setFilterType]   = useState(initialFilter)
   const [filterCat,    setFilterCat]    = useState('Todas')
   const [search,       setSearch]       = useState('')
   const [editing,      setEditing]      = useState(null) // movimiento que se está editando

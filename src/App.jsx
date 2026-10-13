@@ -14,9 +14,17 @@ import Settings from './components/Settings/Settings'
 import ResetPassword from './components/Auth/ResetPassword'
 
 function App() {
-  const [page,    setPage]    = useState('dashboard')
-  const [session, setSession] = useState(null)
-  const [loading, setLoading] = useState(true)
+  const [page,            setPage]            = useState('dashboard')
+  const [movementsFilter, setMovementsFilter] = useState('all')
+  const [session,         setSession]         = useState(null)
+  const [loading,         setLoading]         = useState(true)
+
+  function handleSetPage(newPage) {
+    if (newPage !== 'movements') {
+      setMovementsFilter('all')
+    }
+    setPage(newPage)
+  }
   const [darkMode, setDarkMode] = useState(() => {
     const saved = localStorage.getItem('miplata_theme')
     if (saved !== null) return saved === 'dark'
@@ -59,7 +67,7 @@ function App() {
   if (!session) return <Login />
 
   return (
-    <MainLayout page={page} setPage={setPage} session={session} darkMode={darkMode} setDarkMode={setDarkMode}>
+    <MainLayout page={page} setPage={handleSetPage} session={session} darkMode={darkMode} setDarkMode={setDarkMode}>
       <AnimatePresence mode="wait">
         <motion.div
           key={page}
@@ -68,9 +76,9 @@ function App() {
           exit={{ opacity: 0, y: -15 }}
           transition={{ duration: 0.25, ease: 'easeOut' }}
         >
-          {page === 'dashboard' && <Dashboard session={session} setPage={setPage} />}
+          {page === 'dashboard' && <Dashboard session={session} setPage={handleSetPage} setMovementsFilter={setMovementsFilter} />}
           {page === 'reports'   && <Reports />}
-          {page === 'movements' && <Movements />}
+          {page === 'movements' && <Movements key={movementsFilter} initialFilter={movementsFilter} />}
           {page === 'wallets'   && <Wallets session={session} />}
           {page === 'budgets'   && <Budgets session={session} />}
           {page === 'subscriptions' && <Subscriptions session={session} />}
