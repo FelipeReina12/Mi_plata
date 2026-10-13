@@ -21,6 +21,10 @@
   --bg-input: rgba(255, 255, 255, 0.62);
   --bg-dropdown: linear-gradient(165deg, #FFFFFF 0%, #F6F5FF 100%);
   --bg-bottom-nav: rgba(245, 244, 255, 0.94);
+  --color-income: #0FA971;
+  --color-income-text: #FFFFFF;
+  --color-expense: #F43F5E;
+  --color-expense-text: #FFFFFF;
   --text-main: #16123A;
   --text-muted: #56517C;
   --text-light: #8C88AB;
@@ -124,6 +128,10 @@ body.dark {
   --bg-input: rgba(255, 255, 255, 0.07);
   --bg-dropdown: linear-gradient(165deg, #1C1744 0%, #130F32 100%);
   --bg-bottom-nav: rgba(12, 9, 30, 0.95);
+  --color-income: #38BDF8;
+  --color-income-text: #0B0820;
+  --color-expense: #F472B6;
+  --color-expense-text: #0B0820;
   --text-main: #F4F2FF;
   --text-muted: #BCB6DF;
   --text-light: #8A84B2;

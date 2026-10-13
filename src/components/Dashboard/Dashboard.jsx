@@ -128,7 +128,7 @@ function Dashboard({ session, setPage, setMovementsFilter }) {
           label="Ingresos"
           value={formatCOP(totalIncome)}
           sub="Este mes"
-          color="#0FA971"
+          color="var(--color-income)"
           compact={isMobile}
           onClick={() => {
             setMovementsFilter?.('income')
@@ -139,7 +139,7 @@ function Dashboard({ session, setPage, setMovementsFilter }) {
           label="Gastos"
           value={formatCOP(totalExpense)}
           sub="Este mes"
-          color="#F43F5E"
+          color="var(--color-expense)"
           compact={isMobile}
           onClick={() => {
             setMovementsFilter?.('expense')
@@ -198,7 +198,7 @@ function Dashboard({ session, setPage, setMovementsFilter }) {
                 ? <span style={{ color: '#7C5CFF', fontSize: '16px', flexShrink: 0 }}>⇄</span>
                 : <div style={{
                     width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0,
-                    background: t.type === 'income' ? '#0FA971' : '#F43F5E',
+                    background: t.type === 'income' ? 'var(--color-income)' : 'var(--color-expense)',
                   }} />
               }
               <div style={{ minWidth: 0 }}>
@@ -208,7 +208,7 @@ function Dashboard({ session, setPage, setMovementsFilter }) {
             </div>
             <div style={{
               fontSize: '13px', fontWeight: '600', flexShrink: 0, marginLeft: '10px',
-              color: t.type === 'transfer' ? '#7C5CFF' : t.type === 'income' ? '#0FA971' : '#F43F5E',
+              color: t.type === 'transfer' ? '#7C5CFF' : t.type === 'income' ? 'var(--color-income)' : 'var(--color-expense)',
             }}>
               {t.type === 'transfer' ? (t.description.includes('→') || t.description.includes('->') ? '-' : '+') : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
             </div>

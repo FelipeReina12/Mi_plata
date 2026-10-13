@@ -85,11 +85,11 @@ function IncomeExpenseForm({ transaction, walletNames, onClose, onSaved }) {
     onSaved([row])
   }
 
-  const typeBtn = (active, color) => ({
+  const typeBtn = (active, color, textColor = '#fff') => ({
     flex: 1, padding: '8px', borderRadius: '8px', cursor: 'pointer', fontWeight: '500', fontSize: '13px',
     border: active ? 'none' : '1px solid var(--border-light)',
     background: active ? color : 'transparent',
-    color: active ? '#fff' : 'var(--text-muted)',
+    color: active ? textColor : 'var(--text-muted)',
   })
 
   return (
@@ -97,8 +97,8 @@ function IncomeExpenseForm({ transaction, walletNames, onClose, onSaved }) {
       <h3 style={titleStyle}>Editar movimiento</h3>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-        <button style={typeBtn(type === 'income', '#0FA971')} onClick={() => setType('income')}>↓ Ingreso</button>
-        <button style={typeBtn(type === 'expense', '#F43F5E')} onClick={() => setType('expense')}>↑ Gasto</button>
+        <button style={typeBtn(type === 'income', 'var(--color-income)', 'var(--color-income-text)')} onClick={() => setType('income')}>↓ Ingreso</button>
+        <button style={typeBtn(type === 'expense', 'var(--color-expense)', 'var(--color-expense-text)')} onClick={() => setType('expense')}>↑ Gasto</button>
       </div>
 
       <div style={{ marginBottom: '10px' }}>

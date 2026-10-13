@@ -48,12 +48,12 @@ function TransactionForm({ onAdd }) {
     setAmount('')
   }
 
-  const btnStyle = (active, color) => ({
+  const btnStyle = (active, color, textColor = '#fff') => ({
     flex: 1, padding: '8px', borderRadius: '8px', cursor: 'pointer',
     fontWeight: '500', fontSize: '13px',
     border: active ? 'none' : '1px solid var(--border-light)',
     background: active ? color : 'transparent',
-    color: active ? '#fff' : 'var(--text-muted)',
+    color: active ? textColor : 'var(--text-muted)',
   })
 
   const inputStyle = {
@@ -75,10 +75,10 @@ function TransactionForm({ onAdd }) {
       <h3 style={{ marginBottom: '16px', fontSize: '14px', color: 'var(--text-main)' }}>Registrar movimiento</h3>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
-        <button style={btnStyle(type === 'income',  '#0FA971')} onClick={() => setType('income')}>
+        <button style={btnStyle(type === 'income',  'var(--color-income)', 'var(--color-income-text)')} onClick={() => setType('income')}>
           ↓ Ingreso
         </button>
-        <button style={btnStyle(type === 'expense', '#F43F5E')} onClick={() => setType('expense')}>
+        <button style={btnStyle(type === 'expense', 'var(--color-expense)', 'var(--color-expense-text)')} onClick={() => setType('expense')}>
           ↑ Gasto
         </button>
       </div>

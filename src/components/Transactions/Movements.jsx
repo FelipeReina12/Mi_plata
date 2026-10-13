@@ -203,7 +203,7 @@ function Movements({ initialFilter = 'all' }) {
               ? <ArrowRightLeft size={14} color="#7C5CFF" style={{ flexShrink: 0 }} />
               : <div style={{
                   width: '8px', height: '8px', borderRadius: '50%', flexShrink: 0,
-                  background: t.type === 'income' ? '#0FA971' : '#F43F5E',
+                  background: t.type === 'income' ? 'var(--color-income)' : 'var(--color-expense)',
                 }} />
             }
 
@@ -220,7 +220,7 @@ function Movements({ initialFilter = 'all' }) {
             {/* Monto */}
             <div style={{
               fontSize: '13px', fontWeight: '600', flexShrink: 0,
-              color: t.type === 'transfer' ? '#7C5CFF' : t.type === 'income' ? '#0FA971' : '#F43F5E',
+              color: t.type === 'transfer' ? '#7C5CFF' : t.type === 'income' ? 'var(--color-income)' : 'var(--color-expense)',
             }}>
               {t.type === 'transfer' ? (t.description.includes('→') || t.description.includes('->') ? '-' : '+') : t.type === 'income' ? '+' : '-'}{formatCOP(t.amount)}
             </div>
