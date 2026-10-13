@@ -8,6 +8,7 @@ import { mergeWithDefaults } from '../../data/defaultWallets'
 import { byDateDesc } from '../../utils/dates'
 import EditTransactionModal from './EditTransactionModal'
 import { AnimatePresence } from 'framer-motion'
+import GlassSelect from '../UI/GlassSelect'
 
 const categoryOptions = ['Todas', 'Comida', 'Transporte', 'Servicios', 'Entretenimiento', 'Salario', 'Otros ingresos', 'Transferencia', 'Otros']
 
@@ -28,6 +29,7 @@ function Movements() {
   const [filterCat,    setFilterCat]    = useState('Todas')
   const [search,       setSearch]       = useState('')
   const [editing,      setEditing]      = useState(null) // movimiento que se está editando
+  const [isSelectOpen, setIsSelectOpen] = useState(false)
   const isMobile = useIsMobile()
 
   useEffect(() => {
@@ -106,7 +108,15 @@ function Movements() {
     <div>
       <h2 style={{ marginBottom: '20px', color: 'var(--text-main)', fontWeight: '600' }}>Movimientos</h2>
 
-      <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '16px 20px', marginBottom: '16px' }}>
+      <div style={{
+        background: 'var(--bg-card)',
+        borderRadius: '12px',
+        border: '1px solid var(--border-light)',
+        padding: '16px 20px',
+        marginBottom: '16px',
+        position: 'relative',
+        zIndex: isSelectOpen ? 100 : 20,
+      }}>
 
         {/* Tipo — centrado, incluyendo transferencias */}
         <div style={{ display: 'flex', gap: '8px', marginBottom: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
@@ -117,19 +127,17 @@ function Movements() {
         </div>
 
         {/* Categoría */}
-        <select
-          value={filterCat}
-          onChange={e => setFilterCat(e.target.value)}
-          style={{
-            padding: '7px 10px', borderRadius: '8px', border: '1px solid var(--border-light)',
-            fontSize: '13px', color: 'var(--text-main)', background: 'var(--bg-input)', cursor: 'pointer',
-            width: '100%',
-          }}>
-          {categoryOptions.map(c => <option key={c}>{c}</option>)}
-        </select>
+        <div style={{ marginBottom: '12px' }}>
+          <GlassSelect
+            value={filterCat}
+            onChange={setFilterCat}
+            options={categoryOptions}
+            onOpenChange={setIsSelectOpen}
+          />
+        </div>
 
         {/* Buscador */}
-        <div style={{ position: 'relative', marginTop: '12px' }}>
+        <div style={{ position: 'relative' }}>
           <Search size={15} color="var(--text-light)" style={{ position: 'absolute', left: '10px', top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} />
           <input
             type="text"
@@ -158,7 +166,14 @@ function Movements() {
         </div>
       </div>
 
-      <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px' }}>
+      <div style={{
+        background: 'var(--bg-card)',
+        borderRadius: '12px',
+        border: '1px solid var(--border-light)',
+        padding: '20px',
+        position: 'relative',
+        zIndex: 1,
+      }}>
         <div style={{ fontSize: '12px', color: 'var(--text-light)', marginBottom: '14px' }}>
           {filtered.length} movimiento{filtered.length !== 1 ? 's' : ''}
           {filtered.length > 0 && ' · toca uno para editarlo'}

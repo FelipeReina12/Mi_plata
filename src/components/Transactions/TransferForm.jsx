@@ -4,6 +4,7 @@ import { ArrowRightLeft } from 'lucide-react'
 import useIsMobile from '../../hooks/useIsMobile'
 import { defaultWallets, mergeWithDefaults } from '../../data/defaultWallets'
 import { todayLocal } from '../../utils/dates'
+import GlassSelect from '../UI/GlassSelect'
 
 const defaultWalletNames = defaultWallets.map(w => w.name)
 
@@ -15,6 +16,7 @@ function TransferForm({ session, onTransfer }) {
   const [description,  setDescription]  = useState('Transferencia')
   const [saving,       setSaving]       = useState(false)
   const [error,        setError]        = useState('')
+  const [isSelectOpen, setIsSelectOpen] = useState(false)
   const isMobile = useIsMobile()
 
   useEffect(() => {
@@ -89,7 +91,15 @@ function TransferForm({ session, onTransfer }) {
   }
 
   return (
-    <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px', marginBottom: '20px' }}>
+    <div style={{
+      background: 'var(--bg-card)',
+      borderRadius: '12px',
+      border: '1px solid var(--border-light)',
+      padding: '20px',
+      marginBottom: '20px',
+      position: 'relative',
+      zIndex: isSelectOpen ? 100 : 15,
+    }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
         <ArrowRightLeft size={16} color="#7C5CFF" />
         <h3 style={{ fontSize: '14px', color: 'var(--text-main)', fontWeight: '600' }}>Transferencia entre billeteras</h3>
@@ -99,18 +109,14 @@ function TransferForm({ session, onTransfer }) {
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr auto 1fr', gap: isMobile ? '4px' : '8px', alignItems: 'center', marginBottom: '12px' }}>
         <div>
           <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Desde</label>
-          <select style={inputStyle} value={from} onChange={e => setFrom(e.target.value)}>
-            {walletNames.map(w => <option key={w}>{w}</option>)}
-          </select>
+          <GlassSelect value={from} onChange={setFrom} options={walletNames} placeholder="Billetera origen" onOpenChange={setIsSelectOpen} />
         </div>
         <div style={{ textAlign: 'center', color: '#7C5CFF', marginTop: isMobile ? '4px' : '18px' }}>
           <ArrowRightLeft size={18} style={{ transform: isMobile ? 'rotate(90deg)' : 'none' }} />
         </div>
         <div>
           <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Hacia</label>
-          <select style={inputStyle} value={to} onChange={e => setTo(e.target.value)}>
-            {walletNames.map(w => <option key={w}>{w}</option>)}
-          </select>
+          <GlassSelect value={to} onChange={setTo} options={walletNames} placeholder="Billetera destino" onOpenChange={setIsSelectOpen} />
         </div>
       </div>
 

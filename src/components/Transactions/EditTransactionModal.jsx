@@ -5,6 +5,7 @@ import { supabase } from '../../supabaseClient'
 import { todayLocal } from '../../utils/dates'
 import { parseTransfer } from '../../utils/balances'
 import { transactionCategories } from '../../data/categories'
+import GlassSelect from '../UI/GlassSelect'
 
 const labelStyle = { fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }
 const inputStyle = {
@@ -118,16 +119,20 @@ function IncomeExpenseForm({ transaction, walletNames, onClose, onSaved }) {
 
       <div style={{ marginBottom: '10px' }}>
         <label style={labelStyle}>Categoría</label>
-        <select style={inputStyle} value={category} onChange={e => setCategory(e.target.value)}>
-          {withCurrent(transactionCategories, category).map(c => <option key={c}>{c}</option>)}
-        </select>
+        <GlassSelect
+          value={category}
+          onChange={setCategory}
+          options={withCurrent(transactionCategories, category)}
+        />
       </div>
 
       <div style={{ marginBottom: '4px' }}>
         <label style={labelStyle}>Billetera</label>
-        <select style={inputStyle} value={wallet} onChange={e => setWallet(e.target.value)}>
-          {withCurrent(walletNames, wallet).map(w => <option key={w}>{w}</option>)}
-        </select>
+        <GlassSelect
+          value={wallet}
+          onChange={setWallet}
+          options={withCurrent(walletNames, wallet)}
+        />
       </div>
 
       {error && <ErrorBox>{error}</ErrorBox>}
@@ -181,18 +186,22 @@ function TransferEditForm({ transaction, partner, walletNames, onClose, onSaved 
 
       <div style={{ marginBottom: '4px' }}>
         <label style={labelStyle}>Desde</label>
-        <select style={inputStyle} value={from} onChange={e => setFrom(e.target.value)}>
-          {withCurrent(walletNames, from).map(w => <option key={w}>{w}</option>)}
-        </select>
+        <GlassSelect
+          value={from}
+          onChange={setFrom}
+          options={withCurrent(walletNames, from)}
+        />
       </div>
       <div style={{ textAlign: 'center', color: '#7C5CFF', margin: '4px 0' }}>
         <ArrowRightLeft size={18} style={{ transform: 'rotate(90deg)' }} />
       </div>
       <div style={{ marginBottom: '10px' }}>
         <label style={labelStyle}>Hacia</label>
-        <select style={inputStyle} value={to} onChange={e => setTo(e.target.value)}>
-          {withCurrent(walletNames, to).map(w => <option key={w}>{w}</option>)}
-        </select>
+        <GlassSelect
+          value={to}
+          onChange={setTo}
+          options={withCurrent(walletNames, to)}
+        />
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px', marginBottom: '10px' }}>

@@ -19,6 +19,7 @@
   --bg-app: #ECEBFF;                    /* color base, debajo de las manchas de color */
   --bg-card: linear-gradient(145deg, rgba(255, 255, 255, 0.64), rgba(255, 255, 255, 0.38)); /* vidrio */
   --bg-input: rgba(255, 255, 255, 0.62);
+  --bg-dropdown: linear-gradient(165deg, #FFFFFF 0%, #F6F5FF 100%);
   --text-main: #16123A;
   --text-muted: #56517C;
   --text-light: #8C88AB;
@@ -88,11 +89,39 @@ input:focus-visible, select:focus-visible, textarea:focus-visible {
   outline-offset: 1px;
 }
 
+/* Opciones de select nativo con fondo y texto legibles en modo claro y oscuro */
+select option {
+  background-color: #ffffff;
+  color: #16123A;
+}
+
+body.dark select option {
+  background-color: #16123A;
+  color: #F4F2FF;
+}
+
+/* Scrollbar estilizado para el menú desplegable Liquid Glass */
+.liquid-glass-dropdown::-webkit-scrollbar {
+  width: 6px;
+}
+.liquid-glass-dropdown::-webkit-scrollbar-track {
+  background: transparent;
+}
+.liquid-glass-dropdown::-webkit-scrollbar-thumb {
+  background: var(--border-light);
+  border-radius: 4px;
+}
+.liquid-glass-dropdown::-webkit-scrollbar-thumb:hover {
+  background: rgba(124, 92, 255, 0.4);
+}
+
+
 body.dark {
   /* Mis Variables - Oscuro (estilo liquid glass) */
   --bg-app: #0B0820;
   --bg-card: linear-gradient(145deg, rgba(255, 255, 255, 0.11), rgba(255, 255, 255, 0.04));
   --bg-input: rgba(255, 255, 255, 0.07);
+  --bg-dropdown: linear-gradient(165deg, #1C1744 0%, #130F32 100%);
   --text-main: #F4F2FF;
   --text-muted: #BCB6DF;
   --text-light: #8A84B2;

@@ -4,6 +4,7 @@ import useIsMobile from '../../hooks/useIsMobile'
 import { defaultWallets, mergeWithDefaults } from '../../data/defaultWallets'
 import { todayLocal } from '../../utils/dates'
 import { transactionCategories as categoryOptions } from '../../data/categories'
+import GlassSelect from '../UI/GlassSelect'
 
 const defaultWalletNames = defaultWallets.map(w => w.name)
 
@@ -14,6 +15,7 @@ function TransactionForm({ onAdd }) {
   const [category,    setCategory]    = useState('Comida')
   const [wallet,      setWallet]      = useState(defaultWalletNames[0])
   const [walletNames, setWalletNames] = useState(defaultWalletNames)
+  const [isSelectOpen, setIsSelectOpen] = useState(false)
   const isMobile = useIsMobile()
 
   useEffect(() => {
@@ -61,7 +63,15 @@ function TransactionForm({ onAdd }) {
   }
 
   return (
-    <div style={{ background: 'var(--bg-card)', borderRadius: '12px', border: '1px solid var(--border-light)', padding: '20px', marginBottom: '20px' }}>
+    <div style={{
+      background: 'var(--bg-card)',
+      borderRadius: '12px',
+      border: '1px solid var(--border-light)',
+      padding: '20px',
+      marginBottom: '20px',
+      position: 'relative',
+      zIndex: isSelectOpen ? 100 : 20,
+    }}>
       <h3 style={{ marginBottom: '16px', fontSize: '14px', color: 'var(--text-main)' }}>Registrar movimiento</h3>
 
       <div style={{ display: 'flex', gap: '8px', marginBottom: '12px' }}>
@@ -97,15 +107,23 @@ function TransactionForm({ onAdd }) {
       <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '10px', marginBottom: '14px' }}>
         <div>
           <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Categoría</label>
-          <select style={inputStyle} value={category} onChange={e => setCategory(e.target.value)}>
-            {categoryOptions.map(c => <option key={c}>{c}</option>)}
-          </select>
+          <GlassSelect
+            value={category}
+            onChange={setCategory}
+            options={categoryOptions}
+            placeholder="Selecciona categoría"
+            onOpenChange={setIsSelectOpen}
+          />
         </div>
         <div>
           <label style={{ fontSize: '12px', color: 'var(--text-muted)', display: 'block', marginBottom: '4px' }}>Billetera</label>
-          <select style={inputStyle} value={wallet} onChange={e => setWallet(e.target.value)}>
-            {walletNames.map(w => <option key={w}>{w}</option>)}
-          </select>
+          <GlassSelect
+            value={wallet}
+            onChange={setWallet}
+            options={walletNames}
+            placeholder="Selecciona billetera"
+            onOpenChange={setIsSelectOpen}
+          />
         </div>
       </div>
 
